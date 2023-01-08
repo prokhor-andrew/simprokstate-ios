@@ -1,5 +1,5 @@
 //
-//  ScenarioAutomaton.swift
+//  FeatureAutomaton.swift
 //  simprokstate
 //
 //  Created by Andrey Prokhorenko on 01.12.2021.
@@ -8,20 +8,20 @@
 import simprokmachine
 
 
-public final class ScenarioAutomaton<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>: Machine {
+public final class FeatureAutomaton<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>: Machine {
     public typealias Input = ExternalTrigger
     public typealias Output = ExternalEffect
     
-    private var state: BasicScenario<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>
+    private var state: Feature<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>
 
     private var subscriptions: [ObjectIdentifier: Subscription<InternalEffect, InternalTrigger>] = [:]
 
-    public init<S: Scenario>(_ initial: S) where
-    S.InternalTrigger == InternalTrigger,
-    S.InternalEffect == InternalEffect,
-    S.ExternalTrigger == ExternalTrigger,
-    S.ExternalEffect == ExternalEffect {
-        self.state = initial.basic
+    public init<F: Featured>(_ initial: F) where
+    F.InternalTrigger == InternalTrigger,
+    F.InternalEffect == InternalEffect,
+    F.ExternalTrigger == ExternalTrigger,
+    F.ExternalEffect == ExternalEffect {
+        self.state = Feature(initial)
     }
 
     public let isProcessOnMain: Bool = false
@@ -35,7 +35,7 @@ public final class ScenarioAutomaton<InternalTrigger, InternalEffect, ExternalTr
         }
     }
 
-    private func handle(event: ScenarioEvent<InternalTrigger, ExternalTrigger>, callback: @escaping Handler<Output>) {
+    private func handle(event: FeatureEvent<InternalTrigger, ExternalTrigger>, callback: @escaping Handler<Output>) {
         switch state.transit(trigger: event) {
         case .skip:
             break
@@ -47,10 +47,12 @@ public final class ScenarioAutomaton<InternalTrigger, InternalEffect, ExternalTr
 
     private func config(callback: @escaping Handler<Output>) {
         // removing subscriptions that are not present in new state
+        
+        let machines = state.machines
         subscriptions = subscriptions.reduce(subscriptions) { dict, element in
             let (key, _) = element
 
-            let ids: Set<ObjectIdentifier> = Set(state.machines.map { ObjectIdentifier($0) })
+            let ids: Set<ObjectIdentifier> = Set(machines.map { ObjectIdentifier($0) })
             if !ids.contains(key) {
                 var copy = dict
                 copy.removeValue(forKey: key)
@@ -61,7 +63,7 @@ public final class ScenarioAutomaton<InternalTrigger, InternalEffect, ExternalTr
         }
 
         // adding subscriptions that are present in new state
-        subscriptions = state.machines.reduce(subscriptions) { [weak self] dict, machine in
+        subscriptions = machines.reduce(subscriptions) { [weak self] dict, machine in
             let key = ObjectIdentifier(machine)
 
             if dict[key] == nil {
@@ -76,7 +78,7 @@ public final class ScenarioAutomaton<InternalTrigger, InternalEffect, ExternalTr
         }
 
         // sending effects
-        state.effects.forEach { event in
+        state.effects().forEach { event in
             switch event {
             case .int(let output):
                 subscriptions.forEach { $0.value.send(input: output) }
@@ -88,20 +90,5 @@ public final class ScenarioAutomaton<InternalTrigger, InternalEffect, ExternalTr
     
     public func onClearUp() {
         
-    }
-}
-
-
-private extension Scenario {
-
-    var basic: BasicScenario<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect> {
-        BasicScenario(effects: effects, machines: machines) {
-            switch transit(trigger: $0) {
-            case .skip:
-                return .skip
-            case .set(let new):
-                return .set(new.basic)
-            }
-        }
     }
 }
