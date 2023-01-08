@@ -35,7 +35,7 @@ public final class ScenarioAutomaton<InternalTrigger, InternalEffect, ExternalTr
         }
     }
 
-    private func handle(event: Directed<InternalTrigger, ExternalTrigger>, callback: @escaping Handler<Output>) {
+    private func handle(event: ScenarioEvent<InternalTrigger, ExternalTrigger>, callback: @escaping Handler<Output>) {
         switch state.transit(trigger: event) {
         case .skip:
             break

@@ -10,22 +10,22 @@ import simprokmachine
 internal struct BasicScenario<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>: Scenario {
     typealias ToScenario = BasicScenario<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>
 
-    let effects: [Directed<InternalEffect, ExternalEffect>]
+    let effects: [ScenarioEvent<InternalEffect, ExternalEffect>]
     let machines: [ParentAutomaton<InternalEffect, InternalTrigger>]
 
-    private let _transit: (Directed<InternalTrigger, ExternalTrigger>) -> Transition<BasicScenario<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>>
+    private let _transit: (ScenarioEvent<InternalTrigger, ExternalTrigger>) -> Transition<BasicScenario<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>>
 
     init(
-        effects: [Directed<InternalEffect, ExternalEffect>],
+        effects: [ScenarioEvent<InternalEffect, ExternalEffect>],
         machines: [ParentAutomaton<InternalEffect, InternalTrigger>],
-        transit: @escaping (Directed<InternalTrigger, ExternalTrigger>) -> Transition<BasicScenario<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>>
+        transit: @escaping (ScenarioEvent<InternalTrigger, ExternalTrigger>) -> Transition<BasicScenario<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>>
     ) {
         self.effects = effects
         self.machines = machines
         self._transit = transit
     }
 
-    func transit(trigger: Directed<InternalTrigger, ExternalTrigger>) -> Transition<BasicScenario<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>> {
+    func transit(trigger: ScenarioEvent<InternalTrigger, ExternalTrigger>) -> Transition<BasicScenario<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>> {
         _transit(trigger)
     }
 }

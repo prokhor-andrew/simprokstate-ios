@@ -19,9 +19,9 @@ public protocol Scenario {
         ToScenario.ExternalTrigger == ExternalTrigger,
         ToScenario.ExternalEffect == ExternalEffect
 
-    var effects: [Directed<InternalEffect, ExternalEffect>] { get }
+    var effects: [ScenarioEvent<InternalEffect, ExternalEffect>] { get }
 
     var machines: [ParentAutomaton<InternalEffect, InternalTrigger>] { get }
 
-    func transit(trigger: Directed<InternalTrigger, ExternalTrigger>) -> Transition<ToScenario>
+    func transit(trigger: ScenarioEvent<InternalTrigger, ExternalTrigger>) -> Transition<ToScenario>
 }
