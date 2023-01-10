@@ -17,7 +17,7 @@ public protocol FeatureMachine: ParentMachine {
 
 public extension FeatureMachine {
     
-    var child: FeatureAutomaton<F.InternalTrigger, F.InternalEffect, F.ExternalTrigger, F.ExternalEffect> {
+    var child: FeatureAutomaton<F.Trigger, F.Effect> {
         FeatureAutomaton(feature)
     }
 }

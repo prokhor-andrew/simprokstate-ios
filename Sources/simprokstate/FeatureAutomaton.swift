@@ -8,19 +8,15 @@
 import simprokmachine
 
 
-public final class FeatureAutomaton<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>: Machine {
-    public typealias Input = ExternalTrigger
-    public typealias Output = ExternalEffect
+public final class FeatureAutomaton<Trigger, Effect>: Machine {
+    public typealias Input = Trigger
+    public typealias Output = Effect
     
-    private var state: Feature<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>
+    private var state: Feature<Trigger, Effect>
 
-    private var subscriptions: [ObjectIdentifier: Subscription<InternalEffect, InternalTrigger>] = [:]
+    private var subscriptions: [ObjectIdentifier: Subscription<Effect, Trigger>] = [:]
 
-    public init<F: Featured>(_ initial: F) where
-    F.InternalTrigger == InternalTrigger,
-    F.InternalEffect == InternalEffect,
-    F.ExternalTrigger == ExternalTrigger,
-    F.ExternalEffect == ExternalEffect {
+    public init<F: Featured>(_ initial: F) where F.Trigger == Trigger, F.Effect == Effect {
         self.state = Feature(initial)
     }
 
@@ -35,7 +31,7 @@ public final class FeatureAutomaton<InternalTrigger, InternalEffect, ExternalTri
         }
     }
 
-    private func handle(event: FeatureEvent<InternalTrigger, ExternalTrigger>, callback: @escaping Handler<Output>) {
+    private func handle(event: FeatureEvent<Trigger>, callback: @escaping Handler<Output>) {
         switch state.transit(trigger: event) {
         case .skip:
             break
@@ -89,6 +85,6 @@ public final class FeatureAutomaton<InternalTrigger, InternalEffect, ExternalTri
     }
     
     public func onClearUp() {
-        
+        // do nothing
     }
 }
