@@ -1,5 +1,5 @@
 //
-//  Feature.swift
+//  Scenario.swift
 //  simprokstate
 //
 //  Created by Andrey Prokhorenko on 01.12.2021.
@@ -7,8 +7,7 @@
 
 import simprokmachine
 
-public struct Feature<Trigger, Effect>: Directed {
-    public typealias ToFeatured = Feature<Trigger, Effect>
+public struct Scenario<Trigger, Effect, ToFeatured: Featured>: Featured where ToFeatured.Trigger == Trigger, ToFeatured.Effect == Effect {
     
     public let machines: [ParentAutomaton<Effect, Trigger>]
     
@@ -22,10 +21,10 @@ public struct Feature<Trigger, Effect>: Directed {
         self._transit = transit
     }
     
-    public init<F: Featured>(_ featured: F) where F.Trigger == Trigger, F.Effect == Effect {
+    public init<F: Featured>(_ featured: F) where F.Trigger == Trigger, F.Effect == Effect, F.ToFeatured == ToFeatured {
         self.init(machines: featured.machines) {
             if let transition = featured.transit(trigger: $0) {
-                return FeatureTransition(Feature(transition.state), effects: transition.effects)
+                return transition
             } else {
                 return nil
             }
