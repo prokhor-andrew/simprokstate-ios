@@ -14,8 +14,6 @@ public protocol Featured {
     associatedtype ToFeatured: Featured where ToFeatured.Trigger == Trigger, ToFeatured.Effect == Effect
     
     var machines: [ParentAutomaton<Effect, Trigger>] { get }
-
-    func effects() -> [FeatureEvent<Effect>]
     
-    func transit(trigger: FeatureEvent<Trigger>) -> FeatureTransition<ToFeatured>
+    func transit(trigger: FeatureEvent<Trigger>) -> FeatureTransition<ToFeatured>?
 }

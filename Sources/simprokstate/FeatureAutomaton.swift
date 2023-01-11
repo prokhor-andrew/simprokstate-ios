@@ -12,12 +12,12 @@ public final class FeatureAutomaton<Trigger, Effect>: Machine {
     public typealias Input = Trigger
     public typealias Output = Effect
     
-    private var state: Feature<Trigger, Effect>
+    private var transition: FeatureTransition<Feature<Trigger, Effect>>
 
     private var subscriptions: [ObjectIdentifier: Subscription<Effect, Trigger>] = [:]
 
-    public init<F: Featured>(_ initial: F) where F.Trigger == Trigger, F.Effect == Effect {
-        self.state = Feature(initial)
+    public init<F: Featured>(_ initial: FeatureTransition<F>) where F.Trigger == Trigger, F.Effect == Effect {
+        self.transition = FeatureTransition(Feature(initial.state), effects: initial.effects)
     }
 
     public let isProcessOnMain: Bool = false
@@ -32,19 +32,19 @@ public final class FeatureAutomaton<Trigger, Effect>: Machine {
     }
 
     private func handle(event: FeatureEvent<Trigger>, callback: @escaping Handler<Output>) {
-        switch state.transit(trigger: event) {
-        case .skip:
-            break
-        case .set(let new):
-            state = new
+        if let new = transition.state.transit(trigger: event) {
+            // order matters as "transition" is used inside "config()"
+            transition = new
             config(callback: callback)
+        } else {
+            // do nothing
         }
     }
 
     private func config(callback: @escaping Handler<Output>) {
         // removing subscriptions that are not present in new state
         
-        let machines = state.machines
+        let machines = transition.state.machines
         subscriptions = subscriptions.reduce(subscriptions) { dict, element in
             let (key, _) = element
 
@@ -74,7 +74,7 @@ public final class FeatureAutomaton<Trigger, Effect>: Machine {
         }
 
         // sending effects
-        state.effects().forEach { event in
+        transition.effects.forEach { event in
             switch event {
             case .int(let output):
                 subscriptions.forEach { $0.value.send(input: output) }

@@ -6,7 +6,17 @@
 //  Copyright (c) 2022 simprok. All rights reserved.
 
 
-public enum FeatureTransition<F: Featured> {
-    case skip
-    case set(F)
+public struct FeatureTransition<F: Featured> {
+    
+    public let state: F
+    public let effects: [FeatureEvent<F.Effect>]
+    
+    public init(_ state: F, effects: FeatureEvent<F.Effect>...) {
+        self.init(state, effects: effects)
+    }
+    
+    public init(_ state: F, effects: [FeatureEvent<F.Effect>]) {
+        self.state = state
+        self.effects = effects
+    }
 }

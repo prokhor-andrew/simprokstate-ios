@@ -12,35 +12,27 @@ public struct Feature<Trigger, Effect>: Featured {
     
     public let machines: [ParentAutomaton<Effect, Trigger>]
     
-    private let _effects: Supplier<[FeatureEvent<Effect>]>
-    private let _transit: Mapper<FeatureEvent<Trigger>, FeatureTransition<ToFeatured>>
+    private let _transit: Mapper<FeatureEvent<Trigger>, FeatureTransition<ToFeatured>?>
     
     public init(
         machines: [ParentAutomaton<Effect, Trigger>],
-        effects: @autoclosure @escaping Supplier<[FeatureEvent<Effect>]>,
-        transit: @escaping Mapper<FeatureEvent<Trigger>, FeatureTransition<ToFeatured>>
+        transit: @escaping Mapper<FeatureEvent<Trigger>, FeatureTransition<ToFeatured>?>
     ) {
         self.machines = machines
-        self._effects = effects
         self._transit = transit
     }
     
     public init<F: Featured>(_ featured: F) where F.Trigger == Trigger, F.Effect == Effect {
-        self.init(machines: featured.machines, effects: featured.effects()) {
-            switch featured.transit(trigger: $0) {
-            case .skip:
-                return .skip
-            case .set(let new):
-                return .set(Feature(new))
+        self.init(machines: featured.machines) {
+            if let transition = featured.transit(trigger: $0) {
+                return FeatureTransition(Feature(transition.state), effects: transition.effects)
+            } else {
+                return nil
             }
         }
     }
     
-    public func transit(trigger: FeatureEvent<Trigger>) -> FeatureTransition<ToFeatured> {
+    public func transit(trigger: FeatureEvent<Trigger>) -> FeatureTransition<ToFeatured>? {
         _transit(trigger)
-    }
-    
-    public func effects() -> [FeatureEvent<Effect>] {
-        _effects()
     }
 }

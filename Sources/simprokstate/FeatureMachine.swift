@@ -11,7 +11,7 @@ import simprokmachine
 public protocol FeatureMachine: ParentMachine {
     associatedtype F: Featured
     
-    var feature: F { get }
+    var feature: FeatureTransition<F> { get }
 }
 
 
