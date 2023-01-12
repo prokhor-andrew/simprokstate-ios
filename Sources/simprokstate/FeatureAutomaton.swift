@@ -12,12 +12,12 @@ public final class FeatureAutomaton<Trigger, Effect>: Machine {
     public typealias Input = Trigger
     public typealias Output = Effect
     
-    private var transition: FeatureTransition<Feature<Trigger, Effect>>
+    private var transition: FeatureTransition<FeatureSelfishObject<Trigger, Effect>>
 
     private var subscriptions: [ObjectIdentifier: Subscription<Effect, Trigger>] = [:]
 
-    public init<F: Featured>(_ initial: FeatureTransition<F>) where F.Trigger == Trigger, F.Effect == Effect {
-        self.transition = FeatureTransition(Feature(initial.state), effects: initial.effects)
+    public init<F: FeatureProtocol>(_ initial: FeatureTransition<F>) where F.Trigger == Trigger, F.Effect == Effect {
+        self.transition = FeatureTransition(FeatureSelfishObject(initial.state), effects: initial.effects)
     }
 
     public let isProcessOnMain: Bool = false

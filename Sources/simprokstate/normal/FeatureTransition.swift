@@ -6,7 +6,7 @@
 //  Copyright (c) 2022 simprok. All rights reserved.
 
 
-public struct FeatureTransition<F: Featured> {
+public struct FeatureTransition<F: FeatureProtocol> {
     
     public let state: F
     public let effects: [FeatureEvent<F.Effect>]
