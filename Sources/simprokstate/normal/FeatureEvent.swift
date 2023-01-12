@@ -10,14 +10,14 @@ public enum FeatureEvent<T> {
     case int(T)
     case ext(T)
     
-    var value: T {
+    public var value: T {
         switch self {
         case .ext(let value), .int(let value):
             return value
         }
     }
     
-    var isExternal: Bool {
+    public var isExternal: Bool {
         switch self {
         case .int:
             return false
@@ -26,5 +26,5 @@ public enum FeatureEvent<T> {
         }
     }
     
-    var isInternal: Bool { !isExternal }
+    public var isInternal: Bool { !isExternal }
 }
