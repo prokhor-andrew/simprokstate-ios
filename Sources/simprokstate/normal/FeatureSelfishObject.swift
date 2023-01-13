@@ -8,22 +8,22 @@
 import simprokmachine
 
 // MARK: additional initializer 
-public struct FeatureSelfishObject<Trigger, Effect>: FeatureSelfishProtocol {
-    public typealias ToFeature = FeatureSelfishObject<Trigger, Effect>
+public struct FeatureSelfishObject<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>: FeatureSelfishProtocol {
+    public typealias ToFeature = FeatureSelfishObject<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>
     
-    public let machines: [ParentAutomaton<Effect, Trigger>]
+    public let machines: [ParentAutomaton<InternalEffect, InternalTrigger>]
     
-    private let _transit: Mapper<FeatureEvent<Trigger>, FeatureTransition<ToFeature>?>
+    private let _transit: Mapper<FeatureEvent<InternalTrigger, ExternalTrigger>, FeatureTransition<ToFeature>?>
     
     public init(
-        machines: [ParentAutomaton<Effect, Trigger>],
-        transit: @escaping Mapper<FeatureEvent<Trigger>, FeatureTransition<ToFeature>?>
+        machines: [ParentAutomaton<InternalEffect, InternalTrigger>],
+        transit: @escaping Mapper<FeatureEvent<InternalTrigger, ExternalTrigger>, FeatureTransition<ToFeature>?>
     ) {
         self.machines = machines
         self._transit = transit
     }
     
-    public init<F: FeatureProtocol>(_ feature: F) where F.Trigger == Trigger, F.Effect == Effect {
+    public init<F: FeatureProtocol>(_ feature: F) where F.InternalTrigger == InternalTrigger, F.InternalEffect == InternalEffect, F.ExternalTrigger == ExternalTrigger, F.ExternalEffect == ExternalEffect {
         self.init(machines: feature.machines) {
             if let transition = feature.transit(trigger: $0) {
                 let state = FeatureSelfishObject(transition.state)
@@ -35,7 +35,7 @@ public struct FeatureSelfishObject<Trigger, Effect>: FeatureSelfishProtocol {
         }
     }
     
-    public func transit(trigger: FeatureEvent<Trigger>) -> FeatureTransition<ToFeature>? {
+    public func transit(trigger: FeatureEvent<InternalTrigger, ExternalTrigger>) -> FeatureTransition<ToFeature>? {
         _transit(trigger)
     }
 }

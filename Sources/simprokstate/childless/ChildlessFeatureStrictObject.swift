@@ -9,6 +9,8 @@ import simprokmachine
 
 
 public struct ChildlessFeatureStrictObject<Trigger, Effect>: ChildlessFeatureStrictProtocol {
+    public typealias ExternalTrigger = Trigger
+    public typealias ExternalEffect = Effect
     public typealias ToFeature = ChildlessFeatureStrictObject<Trigger, Effect>
     
     

@@ -6,16 +6,16 @@
 //  Copyright (c) 2022 simprok. All rights reserved.
 
 
-public protocol DomainFeatureProtocol: ChildlessFeatureProtocol where Trigger == Effect {
+public protocol DomainFeatureProtocol: ChildlessFeatureProtocol where ExternalTrigger == Event, ExternalEffect == Event {
+    associatedtype Event
     
-    
-    func transit(event: Trigger) -> ToFeature?
+    func transit(event: Event) -> ToFeature?
 }
 
 
 public extension DomainFeatureProtocol {
     
-    func transit(input: Trigger) -> ChildlessFeatureTransition<ToFeature>? {
+    func transit(input: ExternalTrigger) -> ChildlessFeatureTransition<ToFeature>? {
         if let newState = transit(event: input) {
             return ChildlessFeatureTransition(newState, effects: input)
         } else {

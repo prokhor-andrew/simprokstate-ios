@@ -6,6 +6,6 @@
 //  Copyright (c) 2022 simprok. All rights reserved.
 
 
-public protocol DomainFeatureStrictProtocol: DomainFeatureProtocol where ToFeature == Self {
+public protocol DomainFeatureStrictProtocol: DomainFeatureMildProtocol where ToFeature == Self {
     
 }

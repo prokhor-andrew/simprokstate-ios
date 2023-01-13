@@ -8,15 +8,20 @@
 import simprokmachine
 
 
-public struct ChildlessFeatureObject<Trigger, Effect, ToFeature: FeatureProtocol>: ChildlessFeatureProtocol where ToFeature.Trigger == Trigger, ToFeature.Effect == Effect {
+public struct ChildlessFeatureObject<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect, ToFeature: FeatureProtocol>
+: ChildlessFeatureProtocol where
+ToFeature.InternalTrigger == InternalTrigger,
+ToFeature.InternalEffect == InternalEffect,
+ToFeature.ExternalTrigger == ExternalTrigger,
+ToFeature.ExternalEffect == ExternalEffect {
     
-    private let _transit: Mapper<Trigger, ChildlessFeatureTransition<ToFeature>?>
+    private let _transit: Mapper<ExternalTrigger, ChildlessFeatureTransition<ToFeature>?>
 
-    public init(transit: @escaping Mapper<Trigger, ChildlessFeatureTransition<ToFeature>?>) {
+    public init(transit: @escaping Mapper<ExternalTrigger, ChildlessFeatureTransition<ToFeature>?>) {
         self._transit = transit
     }
     
-    public func transit(input: Trigger) -> ChildlessFeatureTransition<ToFeature>? {
+    public func transit(input: ExternalTrigger) -> ChildlessFeatureTransition<ToFeature>? {
         self._transit(input)
     }
 }

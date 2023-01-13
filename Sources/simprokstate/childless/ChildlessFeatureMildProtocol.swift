@@ -6,7 +6,7 @@
 //  Copyright (c) 2022 simprok. All rights reserved.
 
 
-public protocol ChildlessFeatureMildProtocol: ChildlessFeatureProtocol where ToFeature: ChildlessFeatureMildProtocol {
+public protocol ChildlessFeatureMildProtocol: ChildlessFeatureProtocol where ToFeature: ChildlessFeatureMildProtocol, InternalTrigger == Void, InternalEffect == Void {
         
     
 }

@@ -9,13 +9,13 @@
 public struct ChildlessFeatureTransition<F: FeatureProtocol> {
     
     public let state: F
-    public let effects: [F.Effect]
+    public let effects: [F.ExternalEffect]
     
-    public init(_ state: F, effects: F.Effect...) {
+    public init(_ state: F, effects: F.ExternalEffect...) {
         self.init(state, effects: effects)
     }
     
-    public init(_ state: F, effects: [F.Effect]) {
+    public init(_ state: F, effects: [F.ExternalEffect]) {
         self.state = state
         self.effects = effects
     }

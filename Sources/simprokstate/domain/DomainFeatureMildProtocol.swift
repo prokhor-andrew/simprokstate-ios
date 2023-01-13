@@ -6,6 +6,6 @@
 //  Copyright (c) 2022 simprok. All rights reserved.
 
 
-public protocol DomainFeatureMildProtocol: DomainFeatureProtocol where ToFeature: DomainFeatureMildProtocol {
+public protocol DomainFeatureMildProtocol: DomainFeatureProtocol, ChildlessFeatureMildProtocol where ExternalTrigger == ExternalEffect {
     
 }

@@ -9,13 +9,13 @@
 public struct FeatureTransition<F: FeatureProtocol> {
     
     public let state: F
-    public let effects: [FeatureEvent<F.Effect>]
+    public let effects: [FeatureEvent<F.InternalEffect, F.ExternalEffect>]
     
-    public init(_ state: F, effects: FeatureEvent<F.Effect>...) {
+    public init(_ state: F, effects: FeatureEvent<F.InternalEffect, F.ExternalEffect>...) {
         self.init(state, effects: effects)
     }
     
-    public init(_ state: F, effects: [FeatureEvent<F.Effect>]) {
+    public init(_ state: F, effects: [FeatureEvent<F.InternalEffect, F.ExternalEffect>]) {
         self.state = state
         self.effects = effects
     }

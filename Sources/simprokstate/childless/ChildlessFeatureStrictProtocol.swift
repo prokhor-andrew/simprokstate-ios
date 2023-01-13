@@ -6,7 +6,7 @@
 //  Copyright (c) 2022 simprok. All rights reserved.
 
 
-public protocol ChildlessFeatureStrictProtocol: ChildlessFeatureProtocol where ToFeature == Self {
+public protocol ChildlessFeatureStrictProtocol: ChildlessFeatureMildProtocol where ToFeature == Self {
         
     
 }

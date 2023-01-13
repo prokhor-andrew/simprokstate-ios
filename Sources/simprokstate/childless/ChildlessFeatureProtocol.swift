@@ -10,14 +10,14 @@ import simprokmachine
 
 public protocol ChildlessFeatureProtocol: FeatureProtocol {
         
-    func transit(input: Trigger) -> ChildlessFeatureTransition<ToFeature>?
+    func transit(input: ExternalTrigger) -> ChildlessFeatureTransition<ToFeature>?
 }
 
 public extension ChildlessFeatureProtocol {
     
-    var machines: [ParentAutomaton<Effect, Trigger>] { [] }
+    var machines: [ParentAutomaton<InternalEffect, InternalTrigger>] { [] }
     
-    func transit(trigger: FeatureEvent<Trigger>) -> FeatureTransition<ToFeature>? {
+    func transit(trigger: FeatureEvent<InternalTrigger, ExternalTrigger>) -> FeatureTransition<ToFeature>? {
         switch trigger {
         case .int:
             return nil

@@ -8,25 +8,30 @@
 import simprokmachine
 
 // MARK: additional initializer 
-public struct FeatureObject<Trigger, Effect, ToFeature: FeatureProtocol>: FeatureProtocol where ToFeature.Trigger == Trigger, ToFeature.Effect == Effect {
+public struct FeatureObject<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect, ToFeature: FeatureProtocol>
+: FeatureProtocol where
+ToFeature.InternalTrigger == InternalTrigger,
+ToFeature.InternalEffect == InternalEffect,
+ToFeature.ExternalTrigger == ExternalTrigger,
+ToFeature.ExternalEffect == ExternalEffect {
     
-    public let machines: [ParentAutomaton<Effect, Trigger>]
+    public let machines: [ParentAutomaton<InternalEffect, InternalTrigger>]
     
-    private let _transit: Mapper<FeatureEvent<Trigger>, FeatureTransition<ToFeature>?>
+    private let _transit: Mapper<FeatureEvent<InternalTrigger, ExternalTrigger>, FeatureTransition<ToFeature>?>
     
     public init(
-        machines: [ParentAutomaton<Effect, Trigger>],
-        transit: @escaping Mapper<FeatureEvent<Trigger>, FeatureTransition<ToFeature>?>
+        machines: [ParentAutomaton<InternalEffect, InternalTrigger>],
+        transit: @escaping Mapper<FeatureEvent<InternalTrigger, ExternalTrigger>, FeatureTransition<ToFeature>?>
     ) {
         self.machines = machines
         self._transit = transit
     }
     
-    public init<F: FeatureProtocol>(_ feature: F) where F.Trigger == Trigger, F.Effect == Effect, F.ToFeature == ToFeature {
+    public init<F: FeatureProtocol>(_ feature: F) where F.InternalTrigger == ExternalTrigger, F.InternalEffect == InternalEffect, F.ExternalTrigger == ExternalTrigger, F.ExternalEffect == ExternalEffect, F.ToFeature == ToFeature {
         self.init(machines: feature.machines, transit: feature.transit(trigger:))
     }
     
-    public func transit(trigger: FeatureEvent<Trigger>) -> FeatureTransition<ToFeature>? {
+    public func transit(trigger: FeatureEvent<InternalTrigger, ExternalTrigger>) -> FeatureTransition<ToFeature>? {
         _transit(trigger)
     }
 }

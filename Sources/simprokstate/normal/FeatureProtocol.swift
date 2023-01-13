@@ -8,12 +8,18 @@
 import simprokmachine
 
 public protocol FeatureProtocol {
-    associatedtype Trigger
-    associatedtype Effect
+    associatedtype InternalTrigger
+    associatedtype InternalEffect
+    associatedtype ExternalTrigger
+    associatedtype ExternalEffect
 
-    associatedtype ToFeature: FeatureProtocol where ToFeature.Trigger == Trigger, ToFeature.Effect == Effect
+    associatedtype ToFeature: FeatureProtocol where
+    ToFeature.InternalTrigger == InternalTrigger,
+    ToFeature.InternalEffect == InternalEffect,
+    ToFeature.ExternalTrigger == ExternalTrigger,
+    ToFeature.ExternalEffect == ExternalEffect
     
-    var machines: [ParentAutomaton<Effect, Trigger>] { get }
+    var machines: [ParentAutomaton<InternalEffect, InternalTrigger>] { get }
     
-    func transit(trigger: FeatureEvent<Trigger>) -> FeatureTransition<ToFeature>?
+    func transit(trigger: FeatureEvent<InternalTrigger, ExternalTrigger>) -> FeatureTransition<ToFeature>?
 }

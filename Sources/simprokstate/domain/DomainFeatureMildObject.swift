@@ -8,16 +8,20 @@
 import simprokmachine
 
 
-public struct DomainFeatureMildObject<Event, ToFeature: DomainFeatureMildProtocol>: DomainFeatureMildProtocol where ToFeature.Trigger == Event, ToFeature.Effect == Event {
-    public typealias Trigger = Event
-    public typealias Effect = Event
-    
+public struct DomainFeatureMildObject<Event, ToFeature: DomainFeatureMildProtocol>
+: DomainFeatureMildProtocol where
+ToFeature.ExternalTrigger == Event,
+ToFeature.ExternalEffect == Event {
+   
+    public typealias ExternalTrigger = Event
+    public typealias ExternalEffect = Event
+
     private let _transit: Mapper<Event, ToFeature?>
-    
+
     public init(transit: @escaping Mapper<Event, ToFeature?>) {
         self._transit = transit
     }
-    
+
     public func transit(event: Event) -> ToFeature? {
         _transit(event)
     }

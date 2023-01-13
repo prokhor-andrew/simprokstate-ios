@@ -6,16 +6,9 @@
 //  Copyright (c) 2022 simprok. All rights reserved.
 
 
-public enum FeatureEvent<T> {
-    case int(T)
-    case ext(T)
-    
-    public var value: T {
-        switch self {
-        case .ext(let value), .int(let value):
-            return value
-        }
-    }
+public enum FeatureEvent<Internal, External> {
+    case int(Internal)
+    case ext(External)
     
     public var isExternal: Bool {
         switch self {
