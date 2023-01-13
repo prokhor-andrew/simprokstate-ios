@@ -17,14 +17,15 @@ public struct FeatureSelfishObject<InternalTrigger, InternalEffect, ExternalTrig
     
     public init(
         machines: [ParentAutomaton<InternalEffect, InternalTrigger>],
-        transit: @escaping Mapper<FeatureEvent<InternalTrigger, ExternalTrigger>, FeatureTransition<ToFeature>?>
+        transit: @escaping BiMapper<[ParentAutomaton<InternalEffect, InternalTrigger>], FeatureEvent<InternalTrigger, ExternalTrigger>, FeatureTransition<ToFeature>?>
     ) {
         self.machines = machines
-        self._transit = transit
+        self._transit = { transit(machines, $0) }
     }
     
     public init<F: FeatureProtocol>(_ feature: F) where F.InternalTrigger == InternalTrigger, F.InternalEffect == InternalEffect, F.ExternalTrigger == ExternalTrigger, F.ExternalEffect == ExternalEffect {
-        self.init(machines: feature.machines) {
+        self.machines = feature.machines
+        self._transit = {
             if let transition = feature.transit(trigger: $0) {
                 let state = FeatureSelfishObject(transition.state)
                 let effects = transition.effects
