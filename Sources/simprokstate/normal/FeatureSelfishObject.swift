@@ -11,13 +11,13 @@ import simprokmachine
 public struct FeatureSelfishObject<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>: FeatureSelfishProtocol {
     public typealias ToFeature = FeatureSelfishObject<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>
     
-    public let machines: [ParentAutomaton<InternalEffect, InternalTrigger>]
+    public let machines: Machines<InternalEffect, InternalTrigger>
     
     private let _transit: Mapper<FeatureEvent<InternalTrigger, ExternalTrigger>, FeatureTransition<ToFeature>?>
     
     public init(
-        machines: [ParentAutomaton<InternalEffect, InternalTrigger>],
-        transit: @escaping BiMapper<[ParentAutomaton<InternalEffect, InternalTrigger>], FeatureEvent<InternalTrigger, ExternalTrigger>, FeatureTransition<ToFeature>?>
+        machines: Machines<InternalEffect, InternalTrigger>,
+        transit: @escaping BiMapper<Machines<InternalEffect, InternalTrigger>, FeatureEvent<InternalTrigger, ExternalTrigger>, FeatureTransition<ToFeature>?>
     ) {
         self.machines = machines
         self._transit = { transit(machines, $0) }

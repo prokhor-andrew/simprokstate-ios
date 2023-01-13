@@ -19,7 +19,7 @@ public protocol FeatureProtocol {
     ToFeature.ExternalTrigger == ExternalTrigger,
     ToFeature.ExternalEffect == ExternalEffect
     
-    var machines: [ParentAutomaton<InternalEffect, InternalTrigger>] { get }
+    var machines: Machines<InternalEffect, InternalTrigger> { get }
     
     func transit(trigger: FeatureEvent<InternalTrigger, ExternalTrigger>) -> FeatureTransition<ToFeature>?
 }

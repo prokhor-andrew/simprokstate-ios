@@ -15,7 +15,7 @@ public protocol ChildlessFeatureProtocol: FeatureProtocol {
 
 public extension ChildlessFeatureProtocol {
     
-    var machines: [ParentAutomaton<InternalEffect, InternalTrigger>] { [] }
+    var machines: Machines<InternalEffect, InternalTrigger> { Machines([]) }
     
     func transit(trigger: FeatureEvent<InternalTrigger, ExternalTrigger>) -> FeatureTransition<ToFeature>? {
         switch trigger {
