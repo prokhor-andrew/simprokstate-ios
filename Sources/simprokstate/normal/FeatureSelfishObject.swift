@@ -7,7 +7,7 @@
 
 import simprokmachine
 
-// MARK: additional initializer 
+
 public struct FeatureSelfishObject<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>: FeatureSelfishProtocol {
     public typealias ToFeature = FeatureSelfishObject<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>
     
@@ -23,7 +23,7 @@ public struct FeatureSelfishObject<InternalTrigger, InternalEffect, ExternalTrig
         self._transit = { transit(machines, $0) }
     }
     
-    public init<F: FeatureProtocol>(_ feature: F) where F.InternalTrigger == InternalTrigger, F.InternalEffect == InternalEffect, F.ExternalTrigger == ExternalTrigger, F.ExternalEffect == ExternalEffect {
+    public init<F: FeatureSelfishProtocol>(_ feature: F) where F.InternalTrigger == InternalTrigger, F.InternalEffect == InternalEffect, F.ExternalTrigger == ExternalTrigger, F.ExternalEffect == ExternalEffect {
         self.machines = feature.machines
         self._transit = {
             if let transition = feature.transit(trigger: $0) {

@@ -17,7 +17,21 @@ public final class FeatureMachine<InternalTrigger, InternalEffect, ExternalTrigg
     private var subscriptions: [ObjectIdentifier: Subscription<InternalEffect, InternalTrigger>] = [:]
 
     public init<F: FeatureProtocol>(_ initial: FeatureTransition<F>) where F.InternalTrigger == InternalTrigger, F.InternalEffect == InternalEffect, F.ExternalTrigger == ExternalTrigger, F.ExternalEffect == ExternalEffect {
-        self.transition = FeatureTransition(FeatureSelfishObject(initial.state), effects: initial.effects)
+        
+        func object<IF: FeatureProtocol>(_ transition: FeatureTransition<IF>?) -> FeatureTransition<FeatureSelfishObject<F.InternalTrigger, F.InternalEffect, F.ExternalTrigger, F.ExternalEffect>>? where IF.InternalTrigger == InternalTrigger, IF.InternalEffect == InternalEffect, IF.ExternalTrigger == ExternalTrigger, IF.ExternalEffect == ExternalEffect {
+            if let transition = transition {
+                return FeatureTransition(
+                    FeatureSelfishObject(machines: transition.state.machines) { _, event in
+                        object(transition.state.transit(trigger: event))
+                    },
+                    effects: transition.effects
+                )
+            } else {
+                return nil
+            }
+        }
+        
+        self.transition = object(initial)!
     }
 
     public let isProcessOnMain: Bool = false

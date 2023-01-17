@@ -20,6 +20,18 @@ public struct ChildlessFeatureStrictObject<Trigger, Effect>: ChildlessFeatureStr
         self._transit = transit
     }
     
+    public init<F: ChildlessFeatureStrictProtocol>(_ feature: F) where F.ExternalTrigger == ExternalTrigger, F.ExternalEffect == ExternalEffect {
+        self._transit = {
+            if let transition = feature.transit(input: $0) {
+                let state = ChildlessFeatureStrictObject(transition.state)
+                let effects = transition.effects
+                return ChildlessFeatureTransition(state, effects: effects)
+            } else {
+                return nil
+            }
+        }
+    }
+    
     public func transit(input: Trigger) -> ChildlessFeatureTransition<ToFeature>? {
         self._transit(input)
     }

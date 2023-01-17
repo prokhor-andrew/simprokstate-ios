@@ -23,6 +23,10 @@ ToFeature.ExternalEffect == Event {
     public init(transit: @escaping Mapper<Event, ToFeature?>) {
         self._transit = transit
     }
+    
+    public init<F: DomainFeatureProtocol>(_ feature: F) where F.InternalTrigger == InternalTrigger, F.InternalEffect == InternalEffect, F.ExternalTrigger == ExternalTrigger, F.ExternalEffect == ExternalEffect, F.ToFeature == ToFeature {
+        self._transit = feature.transit(event:)
+    }
 
     public func transit(event: Event) -> ToFeature? {
         _transit(event)

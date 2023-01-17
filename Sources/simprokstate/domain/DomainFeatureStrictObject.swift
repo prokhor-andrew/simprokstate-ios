@@ -19,6 +19,16 @@ public struct DomainFeatureStrictObject<Event>: DomainFeatureStrictProtocol {
         self._transit = transit
     }
     
+    public init<F: DomainFeatureStrictProtocol>(_ feature: F) where F.ExternalTrigger == Event, F.ExternalEffect == Event {
+        self._transit = { event in
+            if let new = feature.transit(event: event) {
+                return DomainFeatureStrictObject(new)
+            } else {
+                return nil
+            }
+        }
+    }
+    
     public func transit(event: Event) -> ToFeature? {
         _transit(event)
     }

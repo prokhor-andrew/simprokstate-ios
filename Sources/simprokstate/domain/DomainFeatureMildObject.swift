@@ -22,6 +22,10 @@ ToFeature.ExternalEffect == Event {
         self._transit = transit
     }
 
+    public init<F: DomainFeatureMildProtocol>(_ feature: F) where F.ExternalTrigger == F.ExternalTrigger, F.ExternalEffect == ExternalEffect, F.ToFeature == ToFeature {
+        self._transit = feature.transit(event:)
+    }
+    
     public func transit(event: Event) -> ToFeature? {
         _transit(event)
     }

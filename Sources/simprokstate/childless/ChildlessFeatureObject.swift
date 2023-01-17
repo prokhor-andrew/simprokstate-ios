@@ -21,6 +21,10 @@ ToFeature.ExternalEffect == ExternalEffect {
         self._transit = transit
     }
     
+    public init<F: ChildlessFeatureProtocol>(_ feature: F) where F.InternalTrigger == InternalTrigger, F.InternalEffect == InternalEffect, F.ExternalTrigger == ExternalTrigger, F.ExternalEffect == ExternalEffect, F.ToFeature == ToFeature {
+        self._transit = feature.transit(input:)
+    }
+    
     public func transit(input: ExternalTrigger) -> ChildlessFeatureTransition<ToFeature>? {
         self._transit(input)
     }
