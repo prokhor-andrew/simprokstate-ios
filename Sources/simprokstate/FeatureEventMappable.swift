@@ -7,11 +7,9 @@
 //
 
 
-
 public protocol FeatureEventMappable {
     associatedtype Event
-    
-    
+
     var event: Event? { get }
     
     init?(event: Event)

@@ -9,15 +9,18 @@ import simprokmachine
 
 
 public protocol FeatureAutomaton: ParentAutomaton {
-    associatedtype F: FeatureProtocol
-    
-    var feature: FeatureTransition<F> { get }
+    associatedtype IntTrigger
+    associatedtype IntEffect
+    associatedtype ExtTrigger
+    associatedtype ExtEffect
+
+    var feature: FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect> { get }
 }
 
 
 public extension FeatureAutomaton {
     
-    var child: FeatureMachine<F.InternalTrigger, F.InternalEffect, F.ExternalTrigger, F.ExternalEffect> {
+    var child: FeatureMachine<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
         FeatureMachine(feature)
     }
 }

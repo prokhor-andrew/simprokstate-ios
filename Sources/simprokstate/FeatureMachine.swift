@@ -8,30 +8,16 @@
 import simprokmachine
 
 
-public final class FeatureMachine<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>: Automaton {
-    public typealias Input = ExternalTrigger
-    public typealias Output = ExternalEffect
+public final class FeatureMachine<IntTrigger, IntEffect, ExtTrigger, ExtEffect>: Automaton {
+    public typealias Input = ExtTrigger
+    public typealias Output = ExtEffect
     
-    private var transition: FeatureTransition<FeatureSelfishObject<InternalTrigger, InternalEffect, ExternalTrigger, ExternalEffect>>
+    private var transition: FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
 
-    private var subscriptions: [ObjectIdentifier: Subscription<InternalEffect, InternalTrigger>] = [:]
+    private var subscriptions: [ObjectIdentifier: Subscription<IntEffect, IntTrigger>] = [:]
 
-    public init<F: FeatureProtocol>(_ initial: FeatureTransition<F>) where F.InternalTrigger == InternalTrigger, F.InternalEffect == InternalEffect, F.ExternalTrigger == ExternalTrigger, F.ExternalEffect == ExternalEffect {
-        
-        func object<IF: FeatureProtocol>(_ transition: FeatureTransition<IF>?) -> FeatureTransition<FeatureSelfishObject<F.InternalTrigger, F.InternalEffect, F.ExternalTrigger, F.ExternalEffect>>? where IF.InternalTrigger == InternalTrigger, IF.InternalEffect == InternalEffect, IF.ExternalTrigger == ExternalTrigger, IF.ExternalEffect == ExternalEffect {
-            if let transition = transition {
-                return FeatureTransition(
-                    FeatureSelfishObject(machines: transition.state.machines) { _, event in
-                        object(transition.state.transit(trigger: event))
-                    },
-                    effects: transition.effects
-                )
-            } else {
-                return nil
-            }
-        }
-        
-        self.transition = object(initial)!
+    public init(_ initial: FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>) {
+        self.transition = initial
     }
 
     public let isProcessOnMain: Bool = false
@@ -45,7 +31,7 @@ public final class FeatureMachine<InternalTrigger, InternalEffect, ExternalTrigg
         }
     }
 
-    private func handle(event: FeatureEvent<InternalTrigger, ExternalTrigger>, callback: @escaping Handler<Output>) {
+    private func handle(event: FeatureEvent<IntTrigger, ExtTrigger>, callback: @escaping Handler<Output>) {
         if let new = transition.state.transit(trigger: event) {
             // order matters as "transition" is used inside "config()"
             transition = new
