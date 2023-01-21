@@ -1,5 +1,5 @@
 //
-//  FeatureEventMappable.swift
+//  FeatureMappableEvent.swift
 //  simprokstate
 //
 //  Created by Andrey Prokhorenko on 01.12.2021.
@@ -7,7 +7,7 @@
 //
 
 
-public protocol FeatureEventMappable {
+public protocol FeatureMappableEvent {
     associatedtype Event
 
     var event: Event? { get }
