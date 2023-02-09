@@ -2,9 +2,10 @@
 //  FeatureEvent.swift
 //  simprokstate
 //
-//  Created by Andrey Prokhorenko on 01.12.2021.
-//  Copyright (c) 2022 simprok. All rights reserved.
+//  Created by Andrey Prokhorenko on 01.01.2020.
+//  Copyright (c) 2020 simprok. All rights reserved.
 
+import Foundation
 
 public enum FeatureEvent<Internal, External> {
     case int(Internal)
@@ -23,7 +24,6 @@ public enum FeatureEvent<Internal, External> {
         !isExternal
     }
 }
-
 
 extension FeatureEvent: Equatable where Internal: Equatable, External: Equatable {
     public static func ==(lhs: FeatureEvent<Internal, External>, rhs: FeatureEvent<Internal, External>) -> Bool {
