@@ -23,6 +23,15 @@ public struct Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
         }
     }
 
+    public init(
+            _ machines: Set<Machine<IntEffect, IntTrigger>>,
+            transit: @escaping BiMapper<Set<Machine<IntEffect, IntTrigger>>, FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?>
+    ) {
+        self.init(SetOfMachines(machines)) { machines, event in
+            transit(machines.machines, event)
+        }
+    }
+
     public init(transit: @escaping Mapper<ExtTrigger, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?>) {
         self.init(EmptyMachines()) { _, event in
             switch event {
