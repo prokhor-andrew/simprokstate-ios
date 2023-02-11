@@ -13,18 +13,18 @@ public struct Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
 
     private let _transit: Mapper<FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?>
 
-    public init(
-            _ machines: Set<Machine<IntEffect, IntTrigger>>,
-            transit: @escaping BiMapper<Set<Machine<IntEffect, IntTrigger>>, FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?>
-    ) {
-        self.machines = machines
+    public init<Machines: FeatureMachines>(
+            _ machines: Machines,
+            transit: @escaping BiMapper<Machines, FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?>
+    ) where Machines.Trigger == IntTrigger, Machines.Effect == IntEffect {
+        self.machines = machines.machines
         self._transit = {
             transit(machines, $0)
         }
     }
 
     public init(transit: @escaping Mapper<ExtTrigger, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?>) {
-        self.init([]) { _, event in
+        self.init(EmptyMachines()) { _, event in
             switch event {
             case .int:
                 return nil

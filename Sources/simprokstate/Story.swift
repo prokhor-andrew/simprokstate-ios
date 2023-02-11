@@ -35,9 +35,9 @@ public extension Story {
         }
     }
 
-    func asExtTriggerIntEffect<IntTrigger, ExtEffect>(
-            _ machines: Set<Machine<Event, IntTrigger>>
-    ) -> Feature<IntTrigger, Event, Event, ExtEffect> {
+    func asExtTriggerIntEffect<IntTrigger, ExtEffect, Machines: FeatureMachines>(
+            _ machines: Machines
+    ) -> Feature<IntTrigger, Event, Event, ExtEffect> where Machines.Trigger == IntTrigger, Machines.Effect == Event {
         Feature(machines) { machines, event in
             switch event {
             case .ext(let value):
@@ -55,9 +55,9 @@ public extension Story {
         }
     }
 
-    func asIntTriggerExtEffect<IntEffect, ExtTrigger>(
-            _ machines: Set<Machine<IntEffect, Event>>
-    ) -> Feature<Event, IntEffect, ExtTrigger, Event> {
+    func asIntTriggerExtEffect<IntEffect, ExtTrigger, Machines: FeatureMachines>(
+            _ machines: Machines
+    ) -> Feature<Event, IntEffect, ExtTrigger, Event> where Machines.Trigger == Event, Machines.Effect == IntEffect {
         Feature(machines) { machines, event in
             switch event {
             case .ext:
@@ -75,9 +75,9 @@ public extension Story {
         }
     }
 
-    func asIntTriggerIntEffect<ExtTrigger, ExtEffect>(
-            _ machines: Set<Machine<Event, Event>>
-    ) -> Feature<Event, Event, ExtTrigger, ExtEffect> {
+    func asIntTriggerIntEffect<ExtTrigger, ExtEffect, Machines: FeatureMachines>(
+            _ machines: Machines
+    ) -> Feature<Event, Event, ExtTrigger, ExtEffect> where Machines.Trigger == Event, Machines.Effect == Event {
         Feature(machines) { machines, event in
             switch event {
             case .ext:
