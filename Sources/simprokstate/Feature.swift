@@ -9,35 +9,13 @@ import simprokmachine
 
 public struct Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
 
-    public struct Transition {
+    public let machines: Set<Machine<IntEffect, IntTrigger>>
 
-        public let state: Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
-        public let effects: [FeatureEvent<IntEffect, ExtEffect>]
-
-        public init(
-                _ state: Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
-                effects: FeatureEvent<IntEffect, ExtEffect>...
-        ) {
-            self.init(state, effects: effects)
-        }
-
-        public init(
-                _ state: Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
-                effects: [FeatureEvent<IntEffect, ExtEffect>]
-        ) {
-            self.state = state
-            self.effects = effects
-        }
-    }
-
-
-    public let machines: [Machine<IntEffect, IntTrigger>]
-
-    private let _transit: Mapper<FeatureEvent<IntTrigger, ExtTrigger>, Transition?>
+    private let _transit: Mapper<FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?>
 
     public init(
-            machines: [Machine<IntEffect, IntTrigger>],
-            transit: @escaping BiMapper<[Machine<IntEffect, IntTrigger>], FeatureEvent<IntTrigger, ExtTrigger>, Transition?>
+            _ machines: Set<Machine<IntEffect, IntTrigger>>,
+            transit: @escaping BiMapper<Set<Machine<IntEffect, IntTrigger>>, FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?>
     ) {
         self.machines = machines
         self._transit = {
@@ -45,8 +23,8 @@ public struct Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
         }
     }
 
-    public init(transit: @escaping Mapper<ExtTrigger, Transition?>) {
-        self.init(machines: []) { _, event in
+    public init(transit: @escaping Mapper<ExtTrigger, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?>) {
+        self.init([]) { _, event in
             switch event {
             case .int:
                 return nil
@@ -56,7 +34,7 @@ public struct Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
         }
     }
 
-    public func transit(trigger: FeatureEvent<IntTrigger, ExtTrigger>) -> Transition? {
+    public func transit(trigger: FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>? {
         _transit(trigger)
     }
 }
@@ -66,7 +44,7 @@ public struct Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
 public extension Machine {
 
     init<IntTrigger, IntEffect>(
-            _ transition: Feature<IntTrigger, IntEffect, Input, Output>.Transition
+            _ transition: FeatureTransition<IntTrigger, IntEffect, Input, Output>
     ) {
         self.init(FeatureHolder(transition), isProcessOnMain: false) { object, input, callback in
             object.process(input: input, callback: callback)
@@ -76,10 +54,10 @@ public extension Machine {
 
     private class FeatureHolder<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
 
-        private var transition: Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>.Transition
+        private var transition: FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
         private var subscriptions: [Machine<IntEffect, IntTrigger>: Subscription<IntEffect, IntTrigger>] = [:]
 
-        internal init(_ initial: Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>.Transition) {
+        internal init(_ initial: FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>) {
             transition = initial
         }
 
