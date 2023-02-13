@@ -21,6 +21,25 @@ public struct EmptyMachines<Trigger, Effect>: FeatureMachines {
     }
 }
 
+public extension Feature {
+
+    init(
+            _ machines: Set<Machine<IntEffect, IntTrigger>>,
+            transit: @escaping BiMapper<Set<Machine<IntEffect, IntTrigger>>, FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>
+    ) {
+        self.init(SetOfMachines(machines)) { machines, event in
+            transit(machines.machines, event)
+        }
+    }
+
+    init(
+            _ machines: Machine<IntEffect, IntTrigger>...,
+            transit: @escaping BiMapper<Set<Machine<IntEffect, IntTrigger>>, FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>
+    ) {
+        self.init(Set(machines), transit: transit)
+    }
+}
+
 public struct SetOfMachines<Trigger, Effect>: FeatureMachines {
 
     public let machines: Set<Machine<Effect, Trigger>>

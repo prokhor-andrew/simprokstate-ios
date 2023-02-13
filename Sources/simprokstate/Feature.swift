@@ -11,43 +11,37 @@ public struct Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
 
     public let machines: Set<Machine<IntEffect, IntTrigger>>
 
-    private let _transit: Mapper<FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?>
+    private let _transit: Mapper<FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>
 
     public init<Machines: FeatureMachines>(
             _ machines: Machines,
-            transit: @escaping BiMapper<Machines, FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?>
+            transit: @escaping BiMapper<Machines, FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>
     ) where Machines.Trigger == IntTrigger, Machines.Effect == IntEffect {
         self.machines = machines.machines
-        self._transit = {
+        _transit = {
             transit(machines, $0)
         }
     }
 
-    public init(
-            _ machines: Set<Machine<IntEffect, IntTrigger>>,
-            transit: @escaping BiMapper<Set<Machine<IntEffect, IntTrigger>>, FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?>
-    ) {
-        self.init(SetOfMachines(machines)) { machines, event in
-            transit(machines.machines, event)
-        }
-    }
-
-    public init(transit: @escaping Mapper<ExtTrigger, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?>) {
-        self.init(EmptyMachines()) { _, event in
-            switch event {
-            case .int:
-                return nil
-            case .ext(let value):
-                return transit(value)
+    public init(transit: @escaping Mapper<ExtTrigger, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>) {
+        func feature() -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
+            Feature(EmptyMachines()) { _, trigger in
+                switch trigger {
+                case .int:
+                    return FeatureTransition(feature())
+                case .ext(let value):
+                    return transit(value)
+                }
             }
         }
+
+        self = feature()
     }
 
-    public func transit(trigger: FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>? {
+    public func transit(trigger: FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
         _transit(trigger)
     }
 }
-
 
 
 public extension Machine {
@@ -80,13 +74,9 @@ public extension Machine {
         }
 
         private func handle(event: FeatureEvent<IntTrigger, ExtTrigger>, callback: @escaping Handler<ExtEffect>) {
-            if let new = transition.state.transit(trigger: event) {
-                // order matters as "transition" is used inside "config()"
-                transition = new
-                config(callback: callback)
-            } else {
-                // do nothing
-            }
+            // order matters as "transition" is used inside "config()"
+            transition = transition.state.transit(trigger: event)
+            config(callback: callback)
         }
 
         private func config(callback: @escaping Handler<ExtEffect>) {
