@@ -28,4 +28,8 @@ public struct SetOfMachines<Trigger, Effect>: FeatureMachines {
     public init(_ machines: Set<Machine<Effect, Trigger>>) {
         self.machines = machines
     }
+
+    public init(_ machines: Machine<Effect, Trigger>...) {
+        self.init(Set(machines))
+    }
 }
