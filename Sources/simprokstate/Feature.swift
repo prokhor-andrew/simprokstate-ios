@@ -10,25 +10,22 @@ import simprokmachine
 public struct Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
 
     public let machines: Set<Machine<IntEffect, IntTrigger>>
-    public let info: String
 
     private let _transit: Mapper<FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>
 
     public init<Machines: FeatureMachines>(
             _ machines: Machines,
-            info: String = "",
-            transit: @escaping TriMapper<Machines, String, FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>
+            transit: @escaping BiMapper<Machines, FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>
     ) where Machines.Trigger == IntTrigger, Machines.Effect == IntEffect {
         self.machines = machines.machines
-        self.info = info
         _transit = {
-            transit(machines, info, $0)
+            transit(machines, $0)
         }
     }
 
-    public init(info: String = "", transit: @escaping Mapper<ExtTrigger, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>) {
+    public init(transit: @escaping Mapper<ExtTrigger, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>) {
         func feature() -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
-            Feature(EmptyMachines(), info: info) { _, _, trigger in
+            Feature(EmptyMachines()) { _, trigger in
                 switch trigger {
                 case .int:
                     return FeatureTransition(feature())
@@ -133,11 +130,10 @@ public extension Machine {
 
 extension Feature: Hashable {
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(info)
         hasher.combine(machines)
     }
 
     public static func ==(lhs: Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>, rhs: Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>) -> Bool {
-        lhs.machines == rhs.machines && lhs.info == rhs.info
+        lhs.machines == rhs.machines
     }
 }

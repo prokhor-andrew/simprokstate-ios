@@ -25,20 +25,18 @@ public extension Feature {
 
     init(
             _ machines: Set<Machine<IntEffect, IntTrigger>>,
-            info: String = "",
-            transit: @escaping TriMapper<Set<Machine<IntEffect, IntTrigger>>, String, FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>
+            transit: @escaping BiMapper<Set<Machine<IntEffect, IntTrigger>>, FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>
     ) {
-        self.init(SetOfMachines(machines), info: info) {
-            transit($0.machines, $1, $2)
+        self.init(SetOfMachines(machines)) {
+            transit($0.machines, $1)
         }
     }
 
     init(
             _ machines: Machine<IntEffect, IntTrigger>...,
-            info: String = "",
-            transit: @escaping TriMapper<Set<Machine<IntEffect, IntTrigger>>, String, FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>
+            transit: @escaping BiMapper<Set<Machine<IntEffect, IntTrigger>>, FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>
     ) {
-        self.init(Set(machines), info: info, transit: transit)
+        self.init(Set(machines), transit: transit)
     }
 }
 
