@@ -12,9 +12,11 @@ public struct Story<Event> {
     public let info: String
     private let _transit: Mapper<Event, Story<Event>?>
 
-    public init(info: String = "", transit: @escaping Mapper<Event, Story<Event>?>) {
+    public init(info: String = "", transit: @escaping BiMapper<Event, String, Story<Event>?>) {
         self.info = info
-        _transit = transit
+        _transit = {
+            transit($0, info)
+        }
     }
 
     public func transit(_ event: Event) -> Story<Event>? {
