@@ -1,32 +1,14 @@
 //
-//  Story.swift
-//  simprokstate
+// Created by Andriy Prokhorenko on 14.02.2023.
 //
-//  Created by Andrey Prokhorenko on 01.01.2020.
-//  Copyright (c) 2020 simprok. All rights reserved.
 
 import simprokmachine
-
-public struct Story<Event> {
-
-    private let _transit: Mapper<Event, Story<Event>?>
-
-    public init(transit: @escaping Mapper<Event, Story<Event>?>) {
-        _transit = {
-            transit($0)
-        }
-    }
-
-    public func transit(_ event: Event) -> Story<Event>? {
-        _transit(event)
-    }
-}
 
 public extension Story {
 
     func asExtTriggerExtEffect<IntTrigger, IntEffect>() -> Feature<IntTrigger, IntEffect, Event, Event> {
         func feature() -> Feature<IntTrigger, IntEffect, Event, Event> {
-            Feature { event in
+            Feature(info: info) { _, event in
                 if let new = transit(event) {
                     return FeatureTransition(
                             new.asExtTriggerExtEffect(),
@@ -45,7 +27,7 @@ public extension Story {
             _ machines: Machines
     ) -> Feature<IntTrigger, Event, Event, ExtEffect> where Machines.Trigger == IntTrigger, Machines.Effect == Event {
         func feature() -> Feature<IntTrigger, Event, Event, ExtEffect> {
-            Feature(machines) { machines, event in
+            Feature(machines, info: info) { machines, _, event in
                 switch event {
                 case .ext(let value):
                     if let new = transit(value) {
@@ -69,7 +51,7 @@ public extension Story {
             _ machines: Machines
     ) -> Feature<Event, IntEffect, ExtTrigger, Event> where Machines.Trigger == Event, Machines.Effect == IntEffect {
         func feature() -> Feature<Event, IntEffect, ExtTrigger, Event> {
-            Feature(machines) { machines, event in
+            Feature(machines, info: info) { machines, _, event in
                 switch event {
                 case .ext:
                     return FeatureTransition(feature())
@@ -92,7 +74,7 @@ public extension Story {
             _ machines: Machines
     ) -> Feature<Event, Event, ExtTrigger, ExtEffect> where Machines.Trigger == Event, Machines.Effect == Event {
         func feature() -> Feature<Event, Event, ExtTrigger, ExtEffect> {
-            Feature(machines) { machines, event in
+            Feature(machines, info: info) { machines, _, event in
                 switch event {
                 case .ext:
                     return FeatureTransition(feature())

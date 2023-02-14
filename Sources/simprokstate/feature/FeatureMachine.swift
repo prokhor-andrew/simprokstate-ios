@@ -1,48 +1,8 @@
 //
-//  Feature.swift
-//  simprokstate
+// Created by Andriy Prokhorenko on 14.02.2023.
 //
-//  Created by Andrey Prokhorenko on 01.01.2020.
-//  Copyright (c) 2020 simprok. All rights reserved.
 
 import simprokmachine
-
-public struct Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
-
-    public let machines: Set<Machine<IntEffect, IntTrigger>>
-
-    private let _transit: Mapper<FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>
-
-    public init<Machines: FeatureMachines>(
-            _ machines: Machines,
-            transit: @escaping BiMapper<Machines, FeatureEvent<IntTrigger, ExtTrigger>, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>
-    ) where Machines.Trigger == IntTrigger, Machines.Effect == IntEffect {
-        self.machines = machines.machines
-        _transit = {
-            transit(machines, $0)
-        }
-    }
-
-    public init(transit: @escaping Mapper<ExtTrigger, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>) {
-        func feature() -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
-            Feature(EmptyMachines()) { _, trigger in
-                switch trigger {
-                case .int:
-                    return FeatureTransition(feature())
-                case .ext(let value):
-                    return transit(value)
-                }
-            }
-        }
-
-        self = feature()
-    }
-
-    public func transit(trigger: FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
-        _transit(trigger)
-    }
-}
-
 
 public extension Machine {
 
@@ -124,16 +84,5 @@ public extension Machine {
                 }
             }
         }
-    }
-}
-
-
-extension Feature: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(machines)
-    }
-
-    public static func ==(lhs: Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>, rhs: Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>) -> Bool {
-        lhs.machines == rhs.machines
     }
 }
