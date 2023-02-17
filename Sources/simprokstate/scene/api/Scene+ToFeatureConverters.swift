@@ -1,18 +1,17 @@
 //
-// Created by Andriy Prokhorenko on 14.02.2023.
+// Created by Andriy Prokhorenko on 17.02.2023.
 //
 
-import simprokmachine
 
-public extension Story {
+public extension Scene {
 
-    func asExtTriggerExtEffect<IntTrigger, IntEffect>() -> Feature<IntTrigger, IntEffect, Event, Event> {
+    func asExtTriggerExtEffect<IntTrigger, IntEffect>() -> Feature<IntTrigger, IntEffect, Trigger, Effect> {
         if let transit {
             return Feature.childless { event in
                 if let new = transit(event) {
                     return FeatureTransition(
-                            new.asExtTriggerExtEffect(),
-                            effects: .ext(event)
+                            new.state.asExtTriggerExtEffect(),
+                            effects: new.effects.map { .ext($0) }
                     )
                 } else {
                     return nil
@@ -25,15 +24,15 @@ public extension Story {
 
     func asExtTriggerIntEffect<IntTrigger, ExtEffect, Machines: FeatureMachines>(
             _ machines: Machines
-    ) -> Feature<IntTrigger, Event, Event, ExtEffect> where Machines.Trigger == IntTrigger, Machines.Effect == Event {
+    ) -> Feature<IntTrigger, Effect, Trigger, ExtEffect> where Machines.Trigger == IntTrigger, Machines.Effect == Effect {
         if let transit {
             return Feature.create(machines) { machines, event in
                 switch event {
                 case .ext(let value):
                     if let new = transit(value) {
                         return FeatureTransition(
-                                new.asExtTriggerIntEffect(machines),
-                                effects: .int(value)
+                                new.state.asExtTriggerIntEffect(machines),
+                                effects: new.effects.map { .int($0) }
                         )
                     } else {
                         return nil
@@ -49,7 +48,7 @@ public extension Story {
 
     func asIntTriggerExtEffect<IntEffect, ExtTrigger, Machines: FeatureMachines>(
             _ machines: Machines
-    ) -> Feature<Event, IntEffect, ExtTrigger, Event> where Machines.Trigger == Event, Machines.Effect == IntEffect {
+    ) -> Feature<Trigger, IntEffect, ExtTrigger, Effect> where Machines.Trigger == Trigger, Machines.Effect == IntEffect {
         if let transit {
             return Feature.create(machines) { machines, event in
                 switch event {
@@ -58,8 +57,8 @@ public extension Story {
                 case .int(let value):
                     if let new = transit(value) {
                         return FeatureTransition(
-                                new.asIntTriggerExtEffect(machines),
-                                effects: .ext(value)
+                                new.state.asIntTriggerExtEffect(machines),
+                                effects: new.effects.map { .ext($0) }
                         )
                     } else {
                         return nil
@@ -73,7 +72,7 @@ public extension Story {
 
     func asIntTriggerIntEffect<ExtTrigger, ExtEffect, Machines: FeatureMachines>(
             _ machines: Machines
-    ) -> Feature<Event, Event, ExtTrigger, ExtEffect> where Machines.Trigger == Event, Machines.Effect == Event {
+    ) -> Feature<Trigger, Effect, ExtTrigger, ExtEffect> where Machines.Trigger == Trigger, Machines.Effect == Effect {
         if let transit {
             return Feature.create(machines) { machines, event in
                 switch event {
@@ -82,8 +81,8 @@ public extension Story {
                 case .int(let value):
                     if let new = transit(value) {
                         return FeatureTransition(
-                                new.asIntTriggerIntEffect(machines),
-                                effects: .int(value)
+                                new.state.asIntTriggerIntEffect(machines),
+                                effects: new.effects.map { .int($0) }
                         )
                     } else {
                         return nil
