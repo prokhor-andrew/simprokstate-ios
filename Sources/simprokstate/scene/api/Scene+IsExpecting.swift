@@ -7,7 +7,7 @@ public extension Scene {
 
     func isExpecting(event: Trigger) -> Bool {
         if let transit {
-            return transit(event) != nil
+            return transit(event).state.id != id
         } else {
             return false
         }
@@ -16,7 +16,7 @@ public extension Scene {
     func isExpecting(any events: [Trigger]) -> Bool {
         if let transit {
             for event in events {
-                if transit(event) != nil {
+                if transit(event).state.id != id {
                     return true
                 }
             }
@@ -33,7 +33,7 @@ public extension Scene {
     func isExpecting(all events: [Trigger]) -> Bool {
         if let transit {
             for event in events {
-                if transit(event) == nil {
+                if transit(event).state.id == id {
                     return false
                 }
             }

@@ -6,7 +6,7 @@ public extension Feature {
 
     func isExpecting(event: FeatureEvent<IntTrigger, ExtTrigger>) -> Bool {
         if let transit {
-            return transit(event) != nil
+            return transit(event).state.id != id
         } else {
             return false
         }
@@ -15,7 +15,7 @@ public extension Feature {
     func isExpecting(any events: [FeatureEvent<IntTrigger, ExtTrigger>]) -> Bool {
         if let transit {
             for event in events {
-                if transit(event) != nil {
+                if transit(event).state.id != id {
                     return true
                 }
             }
@@ -32,7 +32,7 @@ public extension Feature {
     func isExpecting(all events: [FeatureEvent<IntTrigger, ExtTrigger>]) -> Bool {
         if let transit {
             for event in events {
-                if transit(event) == nil {
+                if transit(event).state.id == id {
                     return false
                 }
             }

@@ -34,12 +34,12 @@ public extension Machine {
         }
 
         private func handle(event: FeatureEvent<IntTrigger, ExtTrigger>, callback: @escaping Handler<ExtEffect>) {
-            guard let transit = transition.state.transit, let new = transit(event) else {
-                // this is the finale or transition is not executed
+            guard let transit = transition.state.transit else {
+                // this is the finale
                 return
             }
             // order matters as "transition" is used inside "config()"
-            transition = new
+            transition = transit(event)
             config(callback: callback)
         }
 

@@ -8,18 +8,25 @@ public extension Story {
 
     func asExtTriggerExtEffect<IntTrigger, IntEffect>() -> Feature<IntTrigger, IntEffect, Event, Event> {
         if let transit {
-            return Feature.childless { event in
-                if let new = transit(event) {
-                    return FeatureTransition(
-                            new.asExtTriggerExtEffect(),
-                            effects: .ext(event)
-                    )
-                } else {
-                    return nil
+            let feature: Feature<IntTrigger, IntEffect, Event, Event> = Feature.create(SetOfMachines()) { _, event in
+                switch event {
+                case .ext(let value):
+                    if let new = transit(value) {
+                        return FeatureTransition(
+                                new.asExtTriggerExtEffect(),
+                                effects: .ext(value)
+                        )
+                    } else {
+                        return FeatureTransition(feature)
+                    }
+                case .int:
+                    return FeatureTransition(feature)
                 }
             }
+
+            return feature
         } else {
-            return .finale()
+            return .finale(SetOfMachines())
         }
     }
 
@@ -27,7 +34,7 @@ public extension Story {
             _ machines: Machines
     ) -> Feature<IntTrigger, Event, Event, ExtEffect> where Machines.Trigger == IntTrigger, Machines.Effect == Event {
         if let transit {
-            return Feature.create(machines) { machines, event in
+            let feature: Feature<IntTrigger, Event, Event, ExtEffect> = Feature.create(machines) { machines, event in
                 switch event {
                 case .ext(let value):
                     if let new = transit(value) {
@@ -36,14 +43,16 @@ public extension Story {
                                 effects: .int(value)
                         )
                     } else {
-                        return nil
+                        return FeatureTransition(feature)
                     }
                 case .int:
-                    return nil
+                    return FeatureTransition(feature)
                 }
             }
+
+            return feature
         } else {
-            return .finale()
+            return .finale(SetOfMachines())
         }
     }
 
@@ -51,10 +60,10 @@ public extension Story {
             _ machines: Machines
     ) -> Feature<Event, IntEffect, ExtTrigger, Event> where Machines.Trigger == Event, Machines.Effect == IntEffect {
         if let transit {
-            return Feature.create(machines) { machines, event in
+            let feature: Feature<Event, IntEffect, ExtTrigger, Event> = Feature.create(machines) { machines, event in
                 switch event {
                 case .ext:
-                    return nil
+                    return FeatureTransition(feature)
                 case .int(let value):
                     if let new = transit(value) {
                         return FeatureTransition(
@@ -62,12 +71,14 @@ public extension Story {
                                 effects: .ext(value)
                         )
                     } else {
-                        return nil
+                        return FeatureTransition(feature)
                     }
                 }
             }
+
+            return feature
         } else {
-            return .finale()
+            return .finale(SetOfMachines())
         }
     }
 
@@ -75,10 +86,10 @@ public extension Story {
             _ machines: Machines
     ) -> Feature<Event, Event, ExtTrigger, ExtEffect> where Machines.Trigger == Event, Machines.Effect == Event {
         if let transit {
-            return Feature.create(machines) { machines, event in
+            let feature: Feature<Event, Event, ExtTrigger, ExtEffect> = Feature.create(machines) { machines, event in
                 switch event {
                 case .ext:
-                    return nil
+                    return FeatureTransition(feature)
                 case .int(let value):
                     if let new = transit(value) {
                         return FeatureTransition(
@@ -86,12 +97,14 @@ public extension Story {
                                 effects: .int(value)
                         )
                     } else {
-                        return nil
+                        return FeatureTransition(feature)
                     }
                 }
             }
+
+            return feature
         } else {
-            return .finale()
+            return .finale(SetOfMachines())
         }
     }
 }
