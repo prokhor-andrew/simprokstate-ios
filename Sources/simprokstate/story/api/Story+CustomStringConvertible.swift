@@ -7,6 +7,6 @@
 extension  Story: CustomStringConvertible {
 
     public var description: String {
-        "Story info: " + info
+        "Story id: \(id), isFinale: \(isFinale)"
     }
 }

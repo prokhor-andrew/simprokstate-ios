@@ -7,8 +7,12 @@ import simprokmachine
 public extension Story {
 
     func asExtTriggerExtEffect<IntTrigger, IntEffect>() -> Feature<IntTrigger, IntEffect, Event, Event> {
+        if isFinale {
+            return Feature.finale()
+        }
+
         func feature() -> Feature<IntTrigger, IntEffect, Event, Event> {
-            Feature { event in
+            Feature.childless { event in
                 if let new = transit(event) {
                     return FeatureTransition(
                             new.asExtTriggerExtEffect(),
@@ -26,8 +30,12 @@ public extension Story {
     func asExtTriggerIntEffect<IntTrigger, ExtEffect, Machines: FeatureMachines>(
             _ machines: Machines
     ) -> Feature<IntTrigger, Event, Event, ExtEffect> where Machines.Trigger == IntTrigger, Machines.Effect == Event {
+        if isFinale {
+            return Feature.finale()
+        }
+
         func feature() -> Feature<IntTrigger, Event, Event, ExtEffect> {
-            Feature(machines) { machines, event in
+            Feature.create(machines) { machines, event in
                 switch event {
                 case .ext(let value):
                     if let new = transit(value) {
@@ -50,8 +58,12 @@ public extension Story {
     func asIntTriggerExtEffect<IntEffect, ExtTrigger, Machines: FeatureMachines>(
             _ machines: Machines
     ) -> Feature<Event, IntEffect, ExtTrigger, Event> where Machines.Trigger == Event, Machines.Effect == IntEffect {
+        if isFinale {
+            return Feature.finale()
+        }
+
         func feature() -> Feature<Event, IntEffect, ExtTrigger, Event> {
-            Feature(machines) { machines, event in
+            Feature.create(machines) { machines, event in
                 switch event {
                 case .ext:
                     return FeatureTransition(feature())
@@ -73,8 +85,12 @@ public extension Story {
     func asIntTriggerIntEffect<ExtTrigger, ExtEffect, Machines: FeatureMachines>(
             _ machines: Machines
     ) -> Feature<Event, Event, ExtTrigger, ExtEffect> where Machines.Trigger == Event, Machines.Effect == Event {
+        if isFinale {
+            return Feature.finale()
+        }
+
         func feature() -> Feature<Event, Event, ExtTrigger, ExtEffect> {
-            Feature(machines) { machines, event in
+            Feature.create(machines) { machines, event in
                 switch event {
                 case .ext:
                     return FeatureTransition(feature())

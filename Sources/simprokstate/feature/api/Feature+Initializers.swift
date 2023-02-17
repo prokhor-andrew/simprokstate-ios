@@ -6,9 +6,11 @@ import simprokmachine
 
 public extension Feature {
 
-    init(transit: @escaping Mapper<ExtTrigger, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>) {
+    static func childless(
+            transit: @escaping Mapper<ExtTrigger, FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>
+    ) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
         func feature() -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
-            Feature(SetOfMachines()) { _, trigger in
+            Feature.create(SetOfMachines()) { _, trigger in
                 switch trigger {
                 case .int:
                     return FeatureTransition(feature())
@@ -18,6 +20,6 @@ public extension Feature {
             }
         }
 
-        self = feature()
+        return feature()
     }
 }
