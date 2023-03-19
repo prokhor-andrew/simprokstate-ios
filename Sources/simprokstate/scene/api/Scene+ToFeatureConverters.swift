@@ -47,7 +47,7 @@ public extension Scene {
             }
             return feature
         } else {
-            return .finale(SetOfMachines())
+            return .finale(machines)
         }
     }
 
@@ -73,7 +73,7 @@ public extension Scene {
 
             return feature
         } else {
-            return .finale(SetOfMachines())
+            return .finale(machines)
         }
     }
 
@@ -98,7 +98,7 @@ public extension Scene {
 
             return feature
         } else {
-            return .finale(SetOfMachines())
+            return .finale(machines)
         }
     }
 
@@ -126,7 +126,7 @@ public extension Scene {
 
             return feature
         } else {
-            return .finale(SetOfMachines())
+            return .finale(machines)
         }
     }
 
@@ -152,7 +152,7 @@ public extension Scene {
 
             return feature
         } else {
-            return .finale(SetOfMachines())
+            return .finale(machines)
         }
     }
 
@@ -176,7 +176,7 @@ public extension Scene {
 
             return feature
         } else {
-            return .finale(SetOfMachines())
+            return .finale(machines)
         }
     }
 
@@ -200,7 +200,7 @@ public extension Scene {
 
             return feature
         } else {
-            return .finale(SetOfMachines())
+            return .finale(machines)
         }
     }
 
@@ -224,7 +224,7 @@ public extension Scene {
 
             return feature
         } else {
-            return .finale(SetOfMachines())
+            return .finale(machines)
         }
     }
 }

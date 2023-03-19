@@ -20,7 +20,7 @@ public extension Outline {
                 )
             }
         } else {
-            return .finale(SetOfMachines())
+            return .finale(machines)
         }
     }
 }
