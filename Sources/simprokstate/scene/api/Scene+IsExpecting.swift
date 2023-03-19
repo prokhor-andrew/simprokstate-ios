@@ -33,7 +33,7 @@ public extension Scene {
     func isExpecting(all events: [Trigger]) -> Bool {
         if let transit {
             for event in events {
-                if transit(event) != nil {
+                if transit(event) == nil {
                     return false
                 }
             }
