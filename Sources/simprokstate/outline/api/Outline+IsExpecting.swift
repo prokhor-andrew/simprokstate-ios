@@ -30,6 +30,10 @@ public extension Outline {
     }
 
     func isExpecting(all events: [FeatureEvent<IntTrigger, ExtTrigger>]) -> Bool {
+        if events.isEmpty {
+            return false
+        }
+        
         if let transit {
             for event in events {
                 if transit(event) == nil {

@@ -31,6 +31,10 @@ public extension Scene {
     }
 
     func isExpecting(all events: [Trigger]) -> Bool {
+        if events.isEmpty {
+            return false
+        }
+        
         if let transit {
             for event in events {
                 if transit(event) == nil {
