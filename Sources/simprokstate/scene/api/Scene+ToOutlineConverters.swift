@@ -10,13 +10,16 @@ public extension Scene {
             let outline: Outline<IntTrigger, IntEffect, Trigger, Effect> = Outline.create { event in
                 switch event {
                 case .ext(let value):
-                    let new = transit(value)
-                    return OutlineTransition(
+                    if let new = transit(value) {
+                        return OutlineTransition(
                             new.state.asExtTriggerExtEffect(),
                             effects: new.effects.map {
                                 .ext($0)
                             }
-                    )
+                        )
+                    } else {
+                        return nil
+                    }
                 case .int:
                     return OutlineTransition(outline)
                 }
@@ -33,13 +36,16 @@ public extension Scene {
             let outline: Outline<IntTrigger, Effect, Trigger, ExtEffect> = Outline.create { event in
                 switch event {
                 case .ext(let value):
-                    let new = transit(value)
-                    return OutlineTransition(
+                    if let new = transit(value) {
+                        return OutlineTransition(
                             new.state.asIntEffectExtTrigger(),
                             effects: new.effects.map {
                                 .int($0)
                             }
-                    )
+                        )
+                    } else {
+                        return nil
+                    }
                 case .int:
                     return OutlineTransition(outline)
                 }
@@ -57,13 +63,16 @@ public extension Scene {
                 case .ext:
                     return OutlineTransition(outline)
                 case .int(let value):
-                    let new = transit(value)
-                    return OutlineTransition(
+                    if let new = transit(value) {
+                        return OutlineTransition(
                             new.state.asIntTriggerExtEffect(),
                             effects: new.effects.map {
                                 .ext($0)
                             }
-                    )
+                        )
+                    } else {
+                        return nil
+                    }
                 }
             }
 
@@ -80,13 +89,16 @@ public extension Scene {
                 case .ext:
                     return OutlineTransition(outline)
                 case .int(let value):
-                    let new = transit(value)
-                    return OutlineTransition(
+                    if let new = transit(value) {
+                        return OutlineTransition(
                             new.state.asIntTriggerIntEffect(),
                             effects: new.effects.map {
                                 .int($0)
                             }
-                    )
+                        )
+                    } else {
+                        return nil
+                    }
                 }
             }
 
@@ -102,14 +114,17 @@ public extension Scene {
             let outline: Outline<IntTrigger, Effect, Trigger, Effect> = Outline.create { event in
                 switch event {
                 case .ext(let value):
-                    let new = transit(value)
-
-                    return OutlineTransition(
+                    if let new = transit(value) {
+                        
+                        return OutlineTransition(
                             new.state.asIntEffectExtTriggerExtEffect(),
                             effects: new.effects.flatMap {
                                 [.int($0), .ext($0)]
                             }
-                    )
+                        )
+                    } else {
+                        return nil
+                    }
                 case .int:
                     return OutlineTransition(outline)
                 }
@@ -128,14 +143,17 @@ public extension Scene {
                 case .ext:
                     return OutlineTransition(outline)
                 case .int(let value):
-                    let new = transit(value)
-
-                    return OutlineTransition(
+                    if let new = transit(value) {
+                        
+                        return OutlineTransition(
                             new.state.asIntTriggerIntEffectExtEffect(),
                             effects: new.effects.flatMap {
                                 [.int($0), .ext($0)]
                             }
-                    )
+                        )
+                    } else {
+                        return nil
+                    }
                 }
             }
 
@@ -151,13 +169,16 @@ public extension Scene {
                 switch event {
                 case .ext(let value),
                      .int(let value):
-                    let new = transit(value)
-                    return OutlineTransition(
+                    if let new = transit(value) {
+                        return OutlineTransition(
                             new.state.asIntTriggerIntEffectExtTrigger(),
                             effects: new.effects.map {
                                 .int($0)
                             }
-                    )
+                        )
+                    } else {
+                        return nil
+                    }
                 }
             }
 
@@ -173,13 +194,16 @@ public extension Scene {
                 switch event {
                 case .ext(let value),
                      .int(let value):
-                    let new = transit(value)
-                    return OutlineTransition(
+                    if let new = transit(value) {
+                        return OutlineTransition(
                             new.state.asIntTriggerExtTriggerExtEffect(),
                             effects: new.effects.map {
                                 .ext($0)
                             }
-                    )
+                        )
+                    } else {
+                        return nil
+                    }
                 }
             }
 
@@ -195,13 +219,16 @@ public extension Scene {
                 switch event {
                 case .ext(let value),
                      .int(let value):
-                    let new = transit(value)
-                    return OutlineTransition(
+                    if let new = transit(value) {
+                        return OutlineTransition(
                             new.state.asIntTriggerIntEffectExtTriggerExtEffect(),
                             effects: new.effects.flatMap {
                                 [.int($0), .ext($0)]
                             }
-                    )
+                        )
+                    } else {
+                        return nil
+                    }
                 }
             }
 

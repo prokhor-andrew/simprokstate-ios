@@ -9,13 +9,16 @@ public extension Scene {
             let feature: Feature<IntTrigger, IntEffect, Trigger, Effect> = Feature.create(SetOfMachines()) { _, event in
                 switch event {
                 case .ext(let value):
-                    let new = transit(value)
-                    return FeatureTransition(
+                    if let new = transit(value) {
+                        return FeatureTransition(
                             new.state.asExtTriggerExtEffect(),
                             effects: new.effects.map {
                                 .ext($0)
                             }
-                    )
+                        )
+                    } else {
+                        return nil
+                    }
                 case .int:
                     return FeatureTransition(feature)
                 }
@@ -34,13 +37,16 @@ public extension Scene {
             let feature: Feature<Machines.Trigger, Effect, Trigger, ExtEffect> = Feature.create(machines) { machines, event in
                 switch event {
                 case .ext(let value):
-                    let new = transit(value)
-                    return FeatureTransition(
+                    if let new = transit(value) {
+                        return FeatureTransition(
                             new.state.asIntEffectExtTrigger(machines),
                             effects: new.effects.map {
                                 .int($0)
                             }
-                    )
+                        )
+                    } else {
+                        return nil
+                    }
                 case .int:
                     return FeatureTransition(feature)
                 }
@@ -60,14 +66,16 @@ public extension Scene {
                 case .ext:
                     return FeatureTransition(feature)
                 case .int(let value):
-                    let new = transit(value)
-                    return FeatureTransition(
+                    if let new = transit(value) {
+                        return FeatureTransition(
                             new.state.asIntTriggerExtEffect(machines),
                             effects: new.effects.map {
                                 .ext($0)
                             }
-                    )
-
+                        )
+                    } else {
+                        return nil
+                    }
                 }
             }
 
@@ -86,13 +94,16 @@ public extension Scene {
                 case .ext:
                     return FeatureTransition(feature)
                 case .int(let value):
-                    let new = transit(value)
-                    return FeatureTransition(
-                            new.state.asIntTriggerIntEffect(machines),
-                            effects: new.effects.map {
-                                .int($0)
-                            }
-                    )
+                    if let new = transit(value) {
+                        return FeatureTransition(
+                                new.state.asIntTriggerIntEffect(machines),
+                                effects: new.effects.map {
+                                    .int($0)
+                                }
+                        )
+                    } else {
+                        return nil
+                    }
                 }
             }
 
@@ -111,14 +122,17 @@ public extension Scene {
                 switch event {
                 case .ext(let value):
 
-                    let new = transit(value)
-
-                    return FeatureTransition(
+                    if let new = transit(value) {
+                        
+                        return FeatureTransition(
                             new.state.asIntEffectExtTriggerExtEffect(machines),
                             effects: new.effects.flatMap {
                                 [.int($0), .ext($0)]
                             }
-                    )
+                        )
+                    } else {
+                        return nil
+                    }
                 case .int:
                     return FeatureTransition(feature)
                 }
@@ -139,14 +153,17 @@ public extension Scene {
                 case .ext:
                     return FeatureTransition(feature)
                 case .int(let value):
-                    let new = transit(value)
-
-                    return FeatureTransition(
+                    if let new = transit(value) {
+                        
+                        return FeatureTransition(
                             new.state.asIntTriggerIntEffectExtEffect(machines),
                             effects: new.effects.flatMap {
                                 [.int($0), .ext($0)]
                             }
-                    )
+                        )
+                    } else {
+                        return nil
+                    }
                 }
             }
 
@@ -164,13 +181,16 @@ public extension Scene {
                 switch event {
                 case .ext(let value),
                      .int(let value):
-                    let new = transit(value)
-                    return FeatureTransition(
+                    if let new = transit(value) {
+                        return FeatureTransition(
                             new.state.asIntTriggerIntEffectExtTrigger(machines),
                             effects: new.effects.map {
                                 .int($0)
                             }
-                    )
+                        )
+                    } else {
+                        return nil
+                    }
                 }
             }
 
@@ -188,13 +208,16 @@ public extension Scene {
                 switch event {
                 case .ext(let value),
                      .int(let value):
-                    let new = transit(value)
-                    return FeatureTransition(
+                    if let new = transit(value) {
+                        return FeatureTransition(
                             new.state.asIntTriggerExtTriggerExtEffect(machines),
                             effects: new.effects.map {
                                 .ext($0)
                             }
-                    )
+                        )
+                    } else {
+                        return nil
+                    }
                 }
             }
 
@@ -212,13 +235,16 @@ public extension Scene {
                 switch event {
                 case .ext(let value),
                      .int(let value):
-                    let new = transit(value)
-                    return FeatureTransition(
+                    if let new = transit(value) {
+                        return FeatureTransition(
                             new.state.asIntTriggerIntEffectExtTriggerExtEffect(machines),
                             effects: new.effects.flatMap {
                                 [.int($0), .ext($0)]
                             }
-                    )
+                        )
+                    } else {
+                        return nil
+                    }
                 }
             }
 

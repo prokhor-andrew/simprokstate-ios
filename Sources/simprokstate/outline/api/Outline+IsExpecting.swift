@@ -6,7 +6,7 @@ public extension Outline {
 
     func isExpecting(event: FeatureEvent<IntTrigger, ExtTrigger>) -> Bool {
         if let transit {
-            return transit(event).state.id != id
+            return transit(event) != nil
         } else {
             return false
         }
@@ -15,7 +15,7 @@ public extension Outline {
     func isExpecting(any events: [FeatureEvent<IntTrigger, ExtTrigger>]) -> Bool {
         if let transit {
             for event in events {
-                if transit(event).state.id != id {
+                if transit(event) != nil {
                     return true
                 }
             }
@@ -32,7 +32,7 @@ public extension Outline {
     func isExpecting(all events: [FeatureEvent<IntTrigger, ExtTrigger>]) -> Bool {
         if let transit {
             for event in events {
-                if transit(event).state.id == id {
+                if transit(event) != nil {
                     return false
                 }
             }

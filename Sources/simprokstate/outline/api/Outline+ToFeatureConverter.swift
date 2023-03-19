@@ -12,12 +12,14 @@ public extension Outline {
     ) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> where Machines.Trigger == IntTrigger, Machines.Effect == IntEffect {
         if let transit {
             return Feature.create(machines) { machines, event in
-                let transition = transit(event)
-
-                return FeatureTransition(
-                        transition.state.asFeature(machines),
-                        effects: transition.effects
-                )
+                if let transition = transit(event) {
+                    return FeatureTransition(
+                            transition.state.asFeature(machines),
+                            effects: transition.effects
+                    )
+                } else {
+                    return nil
+                }
             }
         } else {
             return .finale(machines)

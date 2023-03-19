@@ -39,8 +39,10 @@ public extension Machine {
                 return
             }
             // order matters as "transition" is used inside "config()"
-            transition = transit(event)
-            config(callback: callback)
+            if let new = transit(event) {
+                transition = new
+                config(callback: callback)
+            }
         }
 
         private func config(callback: @escaping Handler<ExtEffect>) {
