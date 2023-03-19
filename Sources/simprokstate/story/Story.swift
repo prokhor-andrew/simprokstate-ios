@@ -18,10 +18,10 @@ public struct Story<Event> {
     }
 
     public static func finale() -> Story<Event> {
-        Story { _ in nil }
+        Story(nil)
     }
 
     public static func create(transit: @escaping Mapper<Event, Story<Event>?>) -> Story<Event> {
-        Story(nil)
+        Story(transit)
     }
 }
