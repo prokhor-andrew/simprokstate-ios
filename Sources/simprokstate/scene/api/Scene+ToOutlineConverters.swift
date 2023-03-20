@@ -7,7 +7,7 @@ public extension Scene {
 
     func asExtTriggerExtEffect<IntTrigger, IntEffect>() -> Outline<IntTrigger, IntEffect, Trigger, Effect> {
         if let transit {
-            let outline: Outline<IntTrigger, IntEffect, Trigger, Effect> = Outline.create { event in
+            return Outline.create { event in
                 switch event {
                 case .ext(let value):
                     if let new = transit(value) {
@@ -21,11 +21,9 @@ public extension Scene {
                         return nil
                     }
                 case .int:
-                    return OutlineTransition(outline)
+                    return nil
                 }
             }
-
-            return outline
         } else {
             return .finale()
         }
@@ -33,7 +31,7 @@ public extension Scene {
 
     func asIntEffectExtTrigger<IntTrigger, ExtEffect>() -> Outline<IntTrigger, Effect, Trigger, ExtEffect> {
         if let transit {
-            let outline: Outline<IntTrigger, Effect, Trigger, ExtEffect> = Outline.create { event in
+            return Outline.create { event in
                 switch event {
                 case .ext(let value):
                     if let new = transit(value) {
@@ -47,10 +45,9 @@ public extension Scene {
                         return nil
                     }
                 case .int:
-                    return OutlineTransition(outline)
+                    return nil
                 }
             }
-            return outline
         } else {
             return .finale()
         }
@@ -58,10 +55,10 @@ public extension Scene {
 
     func asIntTriggerExtEffect<IntEffect, ExtTrigger>() -> Outline<Trigger, IntEffect, ExtTrigger, Effect> {
         if let transit {
-            let outline: Outline<Trigger, IntEffect, ExtTrigger, Effect> = Outline.create { event in
+            return Outline.create { event in
                 switch event {
                 case .ext:
-                    return OutlineTransition(outline)
+                    return nil
                 case .int(let value):
                     if let new = transit(value) {
                         return OutlineTransition(
@@ -75,8 +72,6 @@ public extension Scene {
                     }
                 }
             }
-
-            return outline
         } else {
             return .finale()
         }
@@ -84,10 +79,10 @@ public extension Scene {
 
     func asIntTriggerIntEffect<ExtTrigger, ExtEffect>() -> Outline<Trigger, Effect, ExtTrigger, ExtEffect> {
         if let transit {
-            let outline: Outline<Trigger, Effect, ExtTrigger, ExtEffect> = Outline.create { event in
+            return Outline.create { event in
                 switch event {
                 case .ext:
-                    return OutlineTransition(outline)
+                    return nil
                 case .int(let value):
                     if let new = transit(value) {
                         return OutlineTransition(
@@ -101,8 +96,6 @@ public extension Scene {
                     }
                 }
             }
-
-            return outline
         } else {
             return .finale()
         }
@@ -111,11 +104,10 @@ public extension Scene {
 
     func asIntEffectExtTriggerExtEffect<IntTrigger>() -> Outline<IntTrigger, Effect, Trigger, Effect> {
         if let transit {
-            let outline: Outline<IntTrigger, Effect, Trigger, Effect> = Outline.create { event in
+            return Outline.create { event in
                 switch event {
                 case .ext(let value):
                     if let new = transit(value) {
-                        
                         return OutlineTransition(
                             new.state.asIntEffectExtTriggerExtEffect(),
                             effects: new.effects.flatMap {
@@ -126,11 +118,9 @@ public extension Scene {
                         return nil
                     }
                 case .int:
-                    return OutlineTransition(outline)
+                    return nil
                 }
             }
-
-            return outline
         } else {
             return .finale()
         }
@@ -138,13 +128,12 @@ public extension Scene {
 
     func asIntTriggerIntEffectExtEffect<ExtTrigger>() -> Outline<Trigger, Effect, ExtTrigger, Effect> {
         if let transit {
-            let outline: Outline<Trigger, Effect, ExtTrigger, Effect> = Outline.create { event in
+            return Outline.create { event in
                 switch event {
                 case .ext:
-                    return OutlineTransition(outline)
+                    return nil
                 case .int(let value):
                     if let new = transit(value) {
-                        
                         return OutlineTransition(
                             new.state.asIntTriggerIntEffectExtEffect(),
                             effects: new.effects.flatMap {
@@ -156,8 +145,6 @@ public extension Scene {
                     }
                 }
             }
-
-            return outline
         } else {
             return .finale()
         }
@@ -165,7 +152,7 @@ public extension Scene {
 
     func asIntTriggerIntEffectExtTrigger<ExtEffect>() -> Outline<Trigger, Effect, Trigger, ExtEffect> {
         if let transit {
-            let outline: Outline<Trigger, Effect, Trigger, ExtEffect> = Outline.create { event in
+            return Outline.create { event in
                 switch event {
                 case .ext(let value),
                      .int(let value):
@@ -181,8 +168,6 @@ public extension Scene {
                     }
                 }
             }
-
-            return outline
         } else {
             return .finale()
         }
@@ -190,7 +175,7 @@ public extension Scene {
 
     func asIntTriggerExtTriggerExtEffect<IntEffect>() -> Outline<Trigger, IntEffect, Trigger, Effect> {
         if let transit {
-            let outline: Outline<Trigger, IntEffect, Trigger, Effect> = Outline.create {  event in
+            return Outline.create { event in
                 switch event {
                 case .ext(let value),
                      .int(let value):
@@ -206,8 +191,6 @@ public extension Scene {
                     }
                 }
             }
-
-            return outline
         } else {
             return .finale()
         }
@@ -215,7 +198,7 @@ public extension Scene {
 
     func asIntTriggerIntEffectExtTriggerExtEffect() -> Outline<Trigger, Effect, Trigger, Effect>  {
         if let transit {
-            let outline: Outline<Trigger, Effect, Trigger, Effect> = Outline.create { event in
+            return Outline.create { event in
                 switch event {
                 case .ext(let value),
                      .int(let value):
@@ -231,8 +214,6 @@ public extension Scene {
                     }
                 }
             }
-
-            return outline
         } else {
             return .finale()
         }
