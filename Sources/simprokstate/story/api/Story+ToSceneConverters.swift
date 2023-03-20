@@ -8,18 +8,16 @@ public extension Story {
 
     func asScene() -> Scene<Event, Event> {
         if let transit {
-            let scene: Scene<Event, Event> = Scene.create { value in
+            return Scene.create { value in
                 if let new = transit(value) {
                     return SceneTransition(
                             new.asScene(),
                             effects: value
                     )
                 } else {
-                    return SceneTransition(scene)
+                    return nil
                 }
             }
-
-            return scene
         } else {
             return .finale()
         }
