@@ -18,8 +18,7 @@ public extension Machine {
 
     private class FeatureHolder<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
 
-        // MARK: TODO - fix dispatch naming
-        private let queue = DispatchQueue(label: "")
+        private let queue = DispatchQueue(label: "\(UUID())/feature", qos: .userInteractive)
         
         private func enqueue(event: FeatureEvent<IntTrigger, ExtTrigger>?, callback: @escaping Handler<ExtEffect>) {
             queue.async { [weak self] in
