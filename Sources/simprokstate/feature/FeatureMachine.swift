@@ -2,81 +2,94 @@
 // Created by Andriy Prokhorenko on 14.02.2023.
 //
 
-import Foundation
 import simprokmachine
 
 public extension Machine {
 
-    convenience init<IntTrigger, IntEffect>(
-            _ transition: FeatureTransition<IntTrigger, IntEffect, Input, Output>
+    init<IntTrigger, IntEffect>(
+        _ feature: @escaping @Sendable () -> Feature<IntTrigger, IntEffect, Input, Output>
     ) {
-        self.init(FeatureHolder(transition), isProcessOnMain: false) { object, input, callback in
-            object.process(input: input, callback: callback)
+        self.init {
+            FeatureHolder(feature)
+        } onChange: {
+            $0.onChange($1)
+        } onProcess: {
+            await $0.onProcess($1)
         }
     }
 
-
-    private class FeatureHolder<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
-
-        private let queue = DispatchQueue(label: "\(UUID())/feature", qos: .userInteractive)
+    
+    private actor FeatureHolder<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
         
-        private func enqueue(event: FeatureEvent<IntTrigger, ExtTrigger>?, callback: @escaping Handler<ExtEffect>) {
-            queue.async { [weak self] in
-                if let event {
-                    self?.handle(event: event, callback: callback)
-                } else {
-                    // initial
-                    self?.config(callback: callback)
-                }
-            }
+        private let initial: () -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+        
+        private var callback: Optional<(ExtEffect) async -> Void> = nil
+        private var processes: [Machine<IntEffect, IntTrigger>: Process<IntEffect, IntTrigger>] = [:]
+        private var transit: Optional<
+            (FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?
+        > = nil
+        
+        internal init(_ initial: @escaping () -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>) {
+            self.initial = initial
         }
         
-        private var transition: FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
-
-        internal init(_ initial: FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>) {
-            transition = initial
-        }
-
-        internal func process(input: ExtTrigger?, callback: @escaping Handler<ExtEffect>) {
-            if let input {
-                enqueue(event: .ext(input), callback: callback)
-            } else {
-                enqueue(event: nil, callback: callback)
-            }
-        }
-
-        private func handle(event: FeatureEvent<IntTrigger, ExtTrigger>, callback: @escaping Handler<ExtEffect>) {
-            guard let transit = transition.state.transit else {
-                // this is the finale
-                return
-            }
-            guard let new = transit(event) else {
-                return
-            }
+        internal func onChange(_ callback: Optional<@Sendable (ExtEffect) async -> Void>) {
+            self.callback = callback
             
-            
-            // order matters as "transition" is used inside "config()"
-            transition = new
-            config(callback: callback)
-        }
-
-        private func config(callback: @escaping Handler<ExtEffect>) {
-            // start machines that are not started
-            for machine in transition.state.machines { 
-                machine.start { [weak self] output, _ in
-                    self?.enqueue(event: .int(output), callback: callback)
-                }
-            }
-
-            // sending effects
-            transition.effects.forEach { event in
-                switch event {
-                case .int(let output):
-                    transition.state.machines.forEach {
-                        $0.send(input: output)
+            if callback != nil {
+                let state = initial()
+                
+                processes = state.machines.reduce([:]) { partialResult, element in
+                    var copy = partialResult
+                    copy[element] = element.run {
+                        await handle(.int($0))
                     }
-                case .ext(let output):
-                    callback(output)
+                    return copy
+                }
+                transit = state.transit
+            } else {
+                processes = [:]
+                transit = nil
+            }
+        }
+        
+        internal func onProcess(_ input: ExtTrigger) async {
+            await handle(.ext(input))
+        }
+        
+        private func handle(_ event: FeatureEvent<IntTrigger, ExtTrigger>) async {
+            guard let _transit = transit else { return }
+            
+            guard let transition = _transit(event) else { return }
+            
+            var existing: [Process<IntEffect, IntTrigger>] = []
+            
+            processes = transition.state.machines.reduce([:]) { partialResult, element in
+                if let value = processes[element] {
+                    existing.append(value)
+                    var copy = partialResult
+                    copy[element] = value
+                    return copy
+                } else {
+                    var copy = partialResult
+                    copy[element] = element.run { await handle(.int($0)) }
+                    return copy
+                }
+            }
+            transit = transition.state.transit
+            
+            for effect in transition.effects {
+                switch effect {
+                case .ext(let effect):
+                    await callback?(effect)
+                case .int(let effect):
+                    await withTaskGroup(of: Void.self) { group in
+                        existing.forEach { process in
+                            group.addTask {
+                                await process.send(effect)
+                            }
+                        }
+                    }
                 }
             }
         }
