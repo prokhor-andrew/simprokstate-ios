@@ -85,10 +85,12 @@ public extension Machine {
                 case .int(let effect):
                     await withTaskGroup(of: Void.self) { group in
                         existing.forEach { process in
-                            group.addTask {
+                            _ = group.addTaskUnlessCancelled(priority: nil) {
                                 await process.send(effect)
                             }
                         }
+                        
+                        await group.waitForAll()
                     }
                 }
             }
