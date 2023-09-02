@@ -3,7 +3,7 @@
 //
 
 
-extension  Scene: Hashable {
+extension Scene: Hashable {
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)

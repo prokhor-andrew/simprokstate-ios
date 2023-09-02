@@ -3,8 +3,7 @@
 //
 
 
-
-extension  Story: CustomStringConvertible {
+extension Story: CustomStringConvertible {
 
     public var description: String {
         "Story id: \(id), isFinale: \(isFinale)"

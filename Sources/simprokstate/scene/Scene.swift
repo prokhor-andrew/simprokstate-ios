@@ -2,8 +2,6 @@
 // Created by Andriy Prokhorenko on 17.02.2023.
 //
 
-import simprokmachine
-
 public struct Scene<Trigger, Effect> {
 
     public let id: String = .id
