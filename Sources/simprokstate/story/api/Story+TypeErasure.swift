@@ -7,7 +7,7 @@
 
 
 
-public protocol AnyStoryEvent {
+public protocol AnyStoryEvent: Sendable {
     
 }
 

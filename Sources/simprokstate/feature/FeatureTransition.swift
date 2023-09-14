@@ -2,7 +2,7 @@
 // Created by Andriy Prokhorenko on 11.02.2023.
 //
 
-public struct FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
+public struct FeatureTransition<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sendable, ExtEffect: Sendable>: Sendable {
 
     public let state: Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
     public let effects: [FeatureEvent<IntEffect, ExtEffect>]

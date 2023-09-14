@@ -6,13 +6,13 @@
 //  Copyright (c) 2020 simprok. All rights reserved.
 
 
-public struct Story<Event> {
+public struct Story<Event: Sendable>: Sendable {
     
     public let id: String = .id
     
-    public let transit: Optional<(Event) -> Story<Event>?>
+    public let transit: Optional<@Sendable (Event) -> Story<Event>?>
 
-    private init(_ transit: Optional<(Event) -> Story<Event>?>) {
+    private init(_ transit: Optional<@Sendable (Event) -> Story<Event>?>) {
         self.transit = transit
     }
 
@@ -20,7 +20,7 @@ public struct Story<Event> {
         Story(nil)
     }
 
-    public static func create(transit: @escaping (Event) -> Story<Event>?) -> Story<Event> {
+    public static func create(transit: @escaping @Sendable (Event) -> Story<Event>?) -> Story<Event> {
         Story(transit)
     }
 }

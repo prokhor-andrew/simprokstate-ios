@@ -6,13 +6,13 @@
 //
 
 
-public protocol AnyOutlineIntTrigger {}
+public protocol AnyOutlineIntTrigger: Sendable {}
 
-public protocol AnyOutlineIntEffect {}
+public protocol AnyOutlineIntEffect: Sendable {}
 
-public protocol AnyOutlineExtTrigger {}
+public protocol AnyOutlineExtTrigger: Sendable {}
 
-public protocol AnyOutlineExtEffect {}
+public protocol AnyOutlineExtEffect: Sendable {}
 
 
 public extension Outline where IntTrigger: AnyOutlineIntTrigger {

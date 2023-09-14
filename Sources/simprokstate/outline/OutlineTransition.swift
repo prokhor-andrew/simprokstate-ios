@@ -3,7 +3,7 @@
 //
 
 
-public struct OutlineTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
+public struct OutlineTransition<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sendable, ExtEffect: Sendable>: Sendable {
 
     public let state: Outline<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
     public let effects: [FeatureEvent<IntEffect, ExtEffect>]

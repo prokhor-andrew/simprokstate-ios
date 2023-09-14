@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum FeatureEvent<Internal, External> {
+public enum FeatureEvent<Internal: Sendable, External: Sendable>: Sendable {
     case int(Internal)
     case ext(External)
 

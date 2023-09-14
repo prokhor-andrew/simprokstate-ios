@@ -6,11 +6,11 @@
 //
 
 
-public protocol AnySceneEffect {
+public protocol AnySceneEffect: Sendable {
     
 }
 
-public protocol AnySceneTrigger {
+public protocol AnySceneTrigger: Sendable {
     
 }
 

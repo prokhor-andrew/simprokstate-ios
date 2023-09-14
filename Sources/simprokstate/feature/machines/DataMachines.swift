@@ -4,7 +4,7 @@
 
 import simprokmachine
 
-public struct DataMachines<Data, Trigger, Effect>: FeatureMachines {
+public struct DataMachines<Data: Sendable, Trigger: Sendable, Effect: Sendable>: FeatureMachines {
 
     public let data: Data
     public let machines: Set<Machine<Effect, Trigger>>

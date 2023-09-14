@@ -3,7 +3,7 @@
 //
 
 
-public struct SceneTransition<Trigger, Effect> {
+public struct SceneTransition<Trigger: Sendable, Effect: Sendable>: Sendable {
 
     public let state: Scene<Trigger, Effect>
     public let effects: [Effect]

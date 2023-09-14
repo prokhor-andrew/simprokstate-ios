@@ -7,15 +7,15 @@
 
 import simprokmachine
 
-public struct Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
+public struct Feature<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sendable, ExtEffect: Sendable>: Sendable {
 
     public let id: String = .id
     public let machines: Set<Machine<IntEffect, IntTrigger>>
-    public let transit: Optional<(FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?>
+    public let transit: Optional<@Sendable (FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?>
 
     private init(
             machines: Set<Machine<IntEffect, IntTrigger>>,
-            transit: Optional<(FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?>
+            transit: Optional<@Sendable (FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?>
     ) {
         self.machines = machines
         self.transit = transit

@@ -4,11 +4,10 @@
 
 import simprokmachine
 
-public protocol FeatureMachines {
-    associatedtype Trigger
-    associatedtype Effect
+public protocol FeatureMachines: Sendable {
+    associatedtype Trigger: Sendable
+    associatedtype Effect: Sendable
 
     var machines: Set<Machine<Effect, Trigger>> { get }
 }
-
 
