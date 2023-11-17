@@ -7,7 +7,7 @@
 
 import simprokmachine
 
-public struct Feature<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sendable, ExtEffect: Sendable>: Sendable {
+public struct Feature<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sendable, ExtEffect: Sendable>: Identifiable, Sendable {
 
     public let id: String = .id
     public let machines: Set<Machine<IntEffect, IntTrigger>>

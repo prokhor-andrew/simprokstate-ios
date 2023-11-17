@@ -6,7 +6,7 @@
 //  Copyright (c) 2020 simprok. All rights reserved.
 
 
-public struct Story<Event: Sendable>: Sendable {
+public struct Story<Event: Sendable>: Identifiable, Sendable {
     
     public let id: String = .id
     

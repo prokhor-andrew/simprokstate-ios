@@ -2,7 +2,7 @@
 // Created by Andriy Prokhorenko on 17.02.2023.
 //
 
-public struct Scene<Trigger: Sendable, Effect: Sendable>: Sendable {
+public struct Scene<Trigger: Sendable, Effect: Sendable>: Identifiable, Sendable {
 
     public let id: String = .id
     
