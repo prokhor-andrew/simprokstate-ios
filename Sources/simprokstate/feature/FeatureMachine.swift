@@ -9,8 +9,8 @@ public extension Machine {
     init<IntTrigger, IntEffect>(
         _ feature: @escaping @Sendable () -> Feature<IntTrigger, IntEffect, Input, Output>
     ) {
-        self.init {
-            FeatureHolder(feature)
+        self.init { logger in
+            FeatureHolder(initial: feature, logger: logger)
         } onChange: {
             $0.onChange($1)
         } onProcess: {
@@ -21,19 +21,25 @@ public extension Machine {
     
     private actor FeatureHolder<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
         
+        private let logger: (String) -> Void
+        
         private let initial: () -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
         
-        private var callback: Optional<(ExtEffect) async -> Void> = nil
+        private var callback: MachineCallback<ExtEffect>?
         private var processes: [Machine<IntEffect, IntTrigger>: Process<IntEffect, IntTrigger>] = [:]
         private var transit: Optional<
             (FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?
         > = nil
         
-        internal init(_ initial: @escaping () -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>) {
+        internal init(
+            initial: @escaping () -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
+            logger: @escaping (String) -> Void
+        ) {
             self.initial = initial
+            self.logger = logger
         }
         
-        internal func onChange(_ callback: Optional<@Sendable (ExtEffect) async -> Void>) {
+        internal func onChange(_ callback: MachineCallback<ExtEffect>?) {
             self.callback = callback
             
             if callback != nil {
@@ -43,7 +49,7 @@ public extension Machine {
                     var copy = partialResult
                     copy[element] = element.run {
                         await handle(.int($0))
-                    }
+                    } logger: { [weak self] in self?.logger($0) }
                     return copy
                 }
                 transit = state.transit
@@ -72,7 +78,7 @@ public extension Machine {
                     return copy
                 } else {
                     var copy = partialResult
-                    copy[element] = element.run { await handle(.int($0)) }
+                    copy[element] = element.run { await handle(.int($0)) } logger: { [weak self] in self?.logger($0) }
                     return copy
                 }
             }
