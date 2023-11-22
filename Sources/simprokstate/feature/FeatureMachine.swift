@@ -7,7 +7,7 @@ import simprokmachine
 public extension Machine {
 
     init<IntTrigger, IntEffect>(
-        _ feature: @escaping @Sendable ((String) -> Void) -> Feature<IntTrigger, IntEffect, Input, Output>
+        _ feature: @escaping @Sendable (@escaping (String) -> Void) -> Feature<IntTrigger, IntEffect, Input, Output>
     ) {
         self.init { logger in
             FeatureHolder<IntTrigger, IntEffect, Input, Output>(
@@ -26,7 +26,7 @@ public extension Machine {
         
         private let logger: (String) -> Void
         
-        private let initial: ((String) -> Void) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+        private let initial: (@escaping (String) -> Void) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
         
         private var callback: MachineCallback<ExtEffect>?
         private var processes: [Machine<IntEffect, IntTrigger>: Process<IntEffect, IntTrigger>] = [:]
@@ -35,7 +35,7 @@ public extension Machine {
         > = nil
         
         internal init(
-            initial: @escaping ((String) -> Void) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
+            initial: @escaping (@escaping (String) -> Void) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
             logger: @escaping (String) -> Void
         ) {
             self.initial = initial
