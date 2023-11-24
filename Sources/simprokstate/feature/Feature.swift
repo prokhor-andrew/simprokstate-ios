@@ -11,11 +11,11 @@ public struct Feature<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sen
 
     public let id: String = .id
     public let machines: Set<Machine<IntEffect, IntTrigger>>
-    public let transit: Optional<@Sendable (FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?>
+    public let transit: Optional<@Sendable (FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>
 
     private init(
             machines: Set<Machine<IntEffect, IntTrigger>>,
-            transit: Optional<@Sendable (FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?>
+            transit: Optional<@Sendable (FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>
     ) {
         self.machines = machines
         self.transit = transit
@@ -29,7 +29,7 @@ public struct Feature<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sen
 
     public static func create<Machines: FeatureMachines>(
             _ machines: Machines,
-            transit: @escaping (Machines, FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?
+            transit: @escaping (Machines, FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
     ) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> where Machines.Trigger == IntTrigger, Machines.Effect == IntEffect {
         Feature(machines: machines.machines) {
             transit(machines, $0)

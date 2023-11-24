@@ -10,11 +10,11 @@ public extension Story {
             return Scene.create { value in
                 if let new = transit(value) {
                     return SceneTransition(
-                            new.asScene(),
-                            effects: value
+                        new.asScene(),
+                        effects: value
                     )
                 } else {
-                    return nil
+                    return SceneTransition(asScene())
                 }
             }
         } else {
