@@ -6,24 +6,16 @@ public extension Story {
 
 
     func isExpecting(event: Event) -> Bool {
-        if let transit {
-            return transit(event) != nil
-        } else {
-            return false
-        }
+        transit(event) != nil
     }
 
     func isExpecting(any events: [Event]) -> Bool {
-        if let transit {
-            for event in events {
-                if transit(event) != nil {
-                    return true
-                }
+        for event in events {
+            if transit(event) != nil {
+                return true
             }
-            return false
-        } else {
-            return false
         }
+        return false
     }
 
     func isExpecting(any events: Event...) -> Bool {
@@ -35,16 +27,12 @@ public extension Story {
             return false
         }
         
-        if let transit {
-            for event in events {
-                if transit(event) == nil {
-                    return false
-                }
+        for event in events {
+            if transit(event) == nil {
+                return false
             }
-            return true
-        } else {
-            return false
         }
+        return true
     }
 
     func isExpecting(all events: Event...) -> Bool {

@@ -11,20 +11,14 @@ public struct Feature<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sen
 
     public let id: String = .id
     public let machines: Set<Machine<IntEffect, IntTrigger>>
-    public let transit: Optional<@Sendable (FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>
+    public let transit: @Sendable (FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
 
     private init(
-            machines: Set<Machine<IntEffect, IntTrigger>>,
-            transit: Optional<@Sendable (FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>>
+        machines: Set<Machine<IntEffect, IntTrigger>>,
+        transit: @Sendable @escaping (FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
     ) {
         self.machines = machines
         self.transit = transit
-    }
-
-    public static func finale<Machines: FeatureMachines>(
-            _ machines: Machines
-    ) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> where Machines.Trigger == IntTrigger, Machines.Effect == IntEffect {
-        Feature(machines: machines.machines, transit: nil)
     }
 
     public static func create<Machines: FeatureMachines>(

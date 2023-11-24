@@ -6,6 +6,6 @@
 extension Scene: CustomStringConvertible {
 
     public var description: String {
-        "Scene id: \(id), isFinale: \(isFinale)"
+        "Scene id: \(id)"
     }
 }

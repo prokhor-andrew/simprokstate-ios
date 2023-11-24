@@ -6,6 +6,6 @@
 extension Feature: CustomStringConvertible {
 
     public var description: String {
-        "Feature id: \(id), isFinale: \(isFinale), machines [\(machines.description)]"
+        "Feature id: \(id), machines [\(machines.description)]"
     }
 }

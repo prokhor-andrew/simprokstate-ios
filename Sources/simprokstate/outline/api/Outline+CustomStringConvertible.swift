@@ -6,6 +6,6 @@
 extension Outline: CustomStringConvertible {
 
     public var description: String {
-        "Outline id: \(id), isFinale: \(isFinale)"
+        "Outline id: \(id)"
     }
 }
