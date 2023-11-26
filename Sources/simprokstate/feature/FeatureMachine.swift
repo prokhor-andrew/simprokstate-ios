@@ -7,7 +7,7 @@ import simprokmachine
 public extension Machine {
 
     init<IntTrigger, IntEffect>(
-        _ feature: @escaping @Sendable (@escaping (String) -> Void) -> Feature<IntTrigger, IntEffect, Input, Output>
+        _ feature: @escaping @Sendable () -> Feature<IntTrigger, IntEffect, Input, Output>
     ) {
         self.init { logger in
             FeatureHolder<IntTrigger, IntEffect, Input, Output>(
@@ -26,16 +26,19 @@ public extension Machine {
         
         private let logger: (String) -> Void
         
-        private let initial: (@escaping (String) -> Void) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+        private let initial: () -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
         
         private var callback: MachineCallback<ExtEffect>?
         private var processes: [Machine<IntEffect, IntTrigger>: Process<IntEffect, IntTrigger>] = [:]
         private var transit: Optional<
-            (FeatureEvent<IntTrigger, ExtTrigger>) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?
+            (
+                FeatureEvent<IntTrigger, ExtTrigger>,
+                (String) -> Void
+            ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?
         > = nil
         
         internal init(
-            initial: @escaping (@escaping (String) -> Void) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
+            initial: @escaping () -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
             logger: @escaping (String) -> Void
         ) {
             self.initial = initial
@@ -46,7 +49,7 @@ public extension Machine {
             self.callback = callback
             
             if callback != nil {
-                let state = initial(logger)
+                let state = initial()
                 
                 processes = state.machines.reduce([:]) { partialResult, element in
                     var copy = partialResult
@@ -69,7 +72,7 @@ public extension Machine {
         private func handle(_ event: FeatureEvent<IntTrigger, ExtTrigger>) async {
             guard let _transit = transit else { return }
             
-            guard let transition = _transit(event) else { return }
+            guard let transition = _transit(event, logger) else { return }
             
             var existing: [Process<IntEffect, IntTrigger>] = []
             

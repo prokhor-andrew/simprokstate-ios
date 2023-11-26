@@ -10,8 +10,8 @@ public extension Outline {
     func asFeature<Machines: FeatureMachines>(
         _ machines: Machines
     ) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> where Machines.Trigger == IntTrigger, Machines.Effect == IntEffect {
-        Feature.create(machines) { machines, event in
-            let transition = transit(event)
+        Feature.create(machines) { machines, event, logger in
+            let transition = transit(event, logger)
             return FeatureTransition(
                 transition.state.asFeature(machines),
                 effects: transition.effects
@@ -19,4 +19,3 @@ public extension Outline {
         }
     }
 }
-

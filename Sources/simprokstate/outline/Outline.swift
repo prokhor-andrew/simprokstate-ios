@@ -7,10 +7,18 @@ public struct Outline<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sen
     
     public let id: String = .id
     
-    public let transit: @Sendable (FeatureEvent<IntTrigger, ExtTrigger>) -> OutlineTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+    public let transit: @Sendable (
+        FeatureEvent<IntTrigger, ExtTrigger>,
+        (String) -> Void
+    ) -> OutlineTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
     
 
-    public init(transit: @Sendable @escaping (FeatureEvent<IntTrigger, ExtTrigger>) -> OutlineTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>) {
+    public init(
+        transit: @Sendable @escaping (
+            FeatureEvent<IntTrigger, ExtTrigger>,
+            (String) -> Void
+        ) -> OutlineTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+    ) {
         self.transit = transit
     }
 }

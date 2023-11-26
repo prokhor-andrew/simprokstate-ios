@@ -8,15 +8,15 @@ public struct FeatureTransition<IntTrigger: Sendable, IntEffect: Sendable, ExtTr
     public let effects: [FeatureEvent<IntEffect, ExtEffect>]
 
     public init(
-            _ state: Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
-            effects: FeatureEvent<IntEffect, ExtEffect>...
+        _ state: Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
+        effects: FeatureEvent<IntEffect, ExtEffect>...
     ) {
         self.init(state, effects: effects)
     }
 
     public init(
-            _ state: Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
-            effects: [FeatureEvent<IntEffect, ExtEffect>]
+        _ state: Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
+        effects: [FeatureEvent<IntEffect, ExtEffect>]
     ) {
         self.state = state
         self.effects = effects

@@ -10,9 +10,9 @@ public struct Story<Event: Sendable>: Identifiable, Sendable {
     
     public let id: String = .id
     
-    public let transit: @Sendable (Event) -> Story<Event>?
+    public let transit: @Sendable (Event, (String) -> Void) -> Story<Event>?
 
-    public init(transit: @escaping @Sendable (Event) -> Story<Event>?) {
+    public init(transit: @escaping @Sendable (Event, (String) -> Void) -> Story<Event>?) {
         self.transit = transit
     }
 }

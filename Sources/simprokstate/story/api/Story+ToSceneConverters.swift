@@ -6,15 +6,15 @@
 public extension Story {
 
     func asScene() -> Scene<Event, Event> {
-        Scene { value in
-            if let new = transit(value) {
+        Scene { value, logger in
+            if let new = transit(value, logger) {
                 return SceneTransition(
                     new.asScene(),
                     effects: value
                 )
             } else {
                 return SceneTransition(asScene())
-            }
+            } 
         }
     }
 }

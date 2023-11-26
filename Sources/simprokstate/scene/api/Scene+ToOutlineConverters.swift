@@ -6,10 +6,10 @@
 public extension Scene {
 
     func asExtTriggerExtEffect<IntTrigger, IntEffect>() -> Outline<IntTrigger, IntEffect, Trigger, Effect> {
-        Outline { event in
+        Outline { event, logger in
             switch event {
             case .ext(let value):
-                let new = transit(value)
+                let new = transit(value, logger)
                 return OutlineTransition(
                     new.state.asExtTriggerExtEffect(),
                     effects: new.effects.map { .ext($0) }
@@ -21,10 +21,10 @@ public extension Scene {
     }
 
     func asIntEffectExtTrigger<IntTrigger, ExtEffect>() -> Outline<IntTrigger, Effect, Trigger, ExtEffect> {
-        Outline { event in
+        Outline { event, logger in
             switch event {
             case .ext(let value):
-                let new = transit(value)
+                let new = transit(value, logger)
                 return OutlineTransition(
                     new.state.asIntEffectExtTrigger(),
                     effects: new.effects.map {
@@ -38,12 +38,12 @@ public extension Scene {
     }
 
     func asIntTriggerExtEffect<IntEffect, ExtTrigger>() -> Outline<Trigger, IntEffect, ExtTrigger, Effect> {
-        Outline { event in
+        Outline { event, logger in
             switch event {
             case .ext:
                 return OutlineTransition(asIntTriggerExtEffect())
             case .int(let value):
-                let new = transit(value)
+                let new = transit(value, logger)
                 return OutlineTransition(
                     new.state.asIntTriggerExtEffect(),
                     effects: new.effects.map {
@@ -55,12 +55,12 @@ public extension Scene {
     }
 
     func asIntTriggerIntEffect<ExtTrigger, ExtEffect>() -> Outline<Trigger, Effect, ExtTrigger, ExtEffect> {
-        Outline { event in
+        Outline { event, logger in
             switch event {
             case .ext:
                 return OutlineTransition(asIntTriggerIntEffect())
             case .int(let value):
-                let new = transit(value)
+                let new = transit(value, logger)
                 return OutlineTransition(
                     new.state.asIntTriggerIntEffect(),
                     effects: new.effects.map {
@@ -73,10 +73,10 @@ public extension Scene {
 
 
     func asIntEffectExtTriggerExtEffect<IntTrigger>() -> Outline<IntTrigger, Effect, Trigger, Effect> {
-        Outline { event in
+        Outline { event, logger in
             switch event {
             case .ext(let value):
-                let new = transit(value)
+                let new = transit(value, logger)
                 return OutlineTransition(
                     new.state.asIntEffectExtTriggerExtEffect(),
                     effects: new.effects.flatMap {
@@ -90,12 +90,12 @@ public extension Scene {
     }
 
     func asIntTriggerIntEffectExtEffect<ExtTrigger>() -> Outline<Trigger, Effect, ExtTrigger, Effect> {
-        Outline { event in
+        Outline { event, logger in
             switch event {
             case .ext:
                 return OutlineTransition(asIntTriggerIntEffectExtEffect())
             case .int(let value):
-                let new = transit(value)
+                let new = transit(value, logger)
                 return OutlineTransition(
                     new.state.asIntTriggerIntEffectExtEffect(),
                     effects: new.effects.flatMap {
@@ -107,11 +107,11 @@ public extension Scene {
     }
 
     func asIntTriggerIntEffectExtTrigger<ExtEffect>() -> Outline<Trigger, Effect, Trigger, ExtEffect> {
-        Outline { event in
+        Outline { event, logger in
             switch event {
             case .ext(let value),
                  .int(let value):
-                let new = transit(value)
+                let new = transit(value, logger)
                 return OutlineTransition(
                     new.state.asIntTriggerIntEffectExtTrigger(),
                     effects: new.effects.map {
@@ -123,11 +123,11 @@ public extension Scene {
     }
 
     func asIntTriggerExtTriggerExtEffect<IntEffect>() -> Outline<Trigger, IntEffect, Trigger, Effect> {
-        Outline { event in
+        Outline { event, logger in
             switch event {
             case .ext(let value),
                  .int(let value):
-                let new = transit(value)
+                let new = transit(value, logger)
                 return OutlineTransition(
                     new.state.asIntTriggerExtTriggerExtEffect(),
                     effects: new.effects.map {
@@ -139,11 +139,11 @@ public extension Scene {
     }
 
     func asIntTriggerIntEffectExtTriggerExtEffect() -> Outline<Trigger, Effect, Trigger, Effect>  {
-        Outline { event in
+        Outline { event, logger in
             switch event {
             case .ext(let value),
                  .int(let value):
-                let new = transit(value)
+                let new = transit(value, logger)
                 return OutlineTransition(
                     new.state.asIntTriggerIntEffectExtTriggerExtEffect(),
                     effects: new.effects.flatMap {
