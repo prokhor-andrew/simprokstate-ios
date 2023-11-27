@@ -7,7 +7,7 @@ import simprokmachine
 public extension Machine {
 
     init<IntTrigger, IntEffect>(
-        _ feature: @escaping @Sendable () -> Feature<IntTrigger, IntEffect, Input, Output>
+        _ feature: @escaping @Sendable () -> Feature<IntTrigger, IntEffect, Input, Output, Message>
     ) {
         self.init { logger in
             FeatureHolder<IntTrigger, IntEffect, Input, Output>(
@@ -24,22 +24,22 @@ public extension Machine {
     
     private actor FeatureHolder<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
         
-        private let logger: (String) -> Void
+        private let logger: (Message) -> Void
         
-        private let initial: () -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+        private let initial: () -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect, Message>
         
         private var callback: MachineCallback<ExtEffect>?
-        private var processes: [Machine<IntEffect, IntTrigger>: Process<IntEffect, IntTrigger>] = [:]
+        private var processes: [Machine<IntEffect, IntTrigger, Message>: Process<IntEffect, IntTrigger, Message>] = [:]
         private var transit: Optional<
             (
                 FeatureEvent<IntTrigger, ExtTrigger>,
-                (String) -> Void
-            ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?
+                (Message) -> Void
+            ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect, Message>?
         > = nil
         
         internal init(
-            initial: @escaping () -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
-            logger: @escaping (String) -> Void
+            initial: @escaping () -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect, Message>,
+            logger: @escaping (Message) -> Void
         ) {
             self.initial = initial
             self.logger = logger
@@ -74,7 +74,7 @@ public extension Machine {
             
             guard let transition = _transit(event, logger) else { return }
             
-            var existing: [Process<IntEffect, IntTrigger>] = []
+            var existing: [Process<IntEffect, IntTrigger, Message>] = []
             
             processes = transition.state.machines.reduce([:]) { partialResult, element in
                 if let value = processes[element] {

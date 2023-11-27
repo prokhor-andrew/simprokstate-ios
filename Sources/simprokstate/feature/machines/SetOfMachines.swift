@@ -4,15 +4,15 @@
 
 import simprokmachine
 
-public struct SetOfMachines<Trigger: Sendable, Effect: Sendable>: FeatureMachines {
+public struct SetOfMachines<Trigger: Sendable, Effect: Sendable, Message>: FeatureMachines {
 
-    public let machines: Set<Machine<Effect, Trigger>>
+    public let machines: Set<Machine<Effect, Trigger, Message>>
 
-    public init(_ machines: Set<Machine<Effect, Trigger>>) {
+    public init(_ machines: Set<Machine<Effect, Trigger, Message>>) {
         self.machines = machines
     }
 
-    public init(_ machines: Machine<Effect, Trigger>...) {
+    public init(_ machines: Machine<Effect, Trigger, Message>...) {
         self.init(Set(machines))
     }
 }

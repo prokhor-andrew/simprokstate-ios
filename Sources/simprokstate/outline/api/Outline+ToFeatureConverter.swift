@@ -9,7 +9,7 @@ public extension Outline {
 
     func asFeature<Machines: FeatureMachines>(
         _ machines: Machines
-    ) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> where Machines.Trigger == IntTrigger, Machines.Effect == IntEffect {
+    ) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect, Message> where Machines.Trigger == IntTrigger, Machines.Effect == IntEffect, Machines.Message == Message {
         Feature.create(machines) { machines, event, logger in
             let transition = transit(event, logger)
             return FeatureTransition(

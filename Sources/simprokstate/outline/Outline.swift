@@ -3,21 +3,21 @@
 //
 
 
-public struct Outline<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sendable, ExtEffect: Sendable>: Identifiable, Sendable {
+public struct Outline<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sendable, ExtEffect: Sendable, Message>: Identifiable, Sendable {
     
     public let id: String = .id
     
     public let transit: @Sendable (
         FeatureEvent<IntTrigger, ExtTrigger>,
-        (String) -> Void
-    ) -> OutlineTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+        (Message) -> Void
+    ) -> OutlineTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect, Message>
     
 
     public init(
         transit: @Sendable @escaping (
             FeatureEvent<IntTrigger, ExtTrigger>,
-            (String) -> Void
-        ) -> OutlineTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+            (Message) -> Void
+        ) -> OutlineTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect, Message>
     ) {
         self.transit = transit
     }

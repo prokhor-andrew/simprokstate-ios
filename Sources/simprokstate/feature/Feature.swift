@@ -7,21 +7,21 @@
 
 import simprokmachine
 
-public struct Feature<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sendable, ExtEffect: Sendable>: Identifiable, Sendable {
+public struct Feature<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sendable, ExtEffect: Sendable, Message>: Identifiable, Sendable {
 
     public let id: String = .id
-    public let machines: Set<Machine<IntEffect, IntTrigger>>
+    public let machines: Set<Machine<IntEffect, IntTrigger, Message>>
     public let transit: @Sendable (
         FeatureEvent<IntTrigger, ExtTrigger>,
-        (String) -> Void
-    ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+        (Message) -> Void
+    ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect, Message>
 
     private init(
-        machines: Set<Machine<IntEffect, IntTrigger>>,
+        machines: Set<Machine<IntEffect, IntTrigger, Message>>,
         transit: @Sendable @escaping (
             FeatureEvent<IntTrigger, ExtTrigger>,
-            (String) -> Void
-        ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+            (Message) -> Void
+        ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect, Message>
     ) {
         self.machines = machines
         self.transit = transit
@@ -32,9 +32,9 @@ public struct Feature<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sen
         transit: @escaping (
             Machines,
             FeatureEvent<IntTrigger, ExtTrigger>,
-            (String) -> Void
-        ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
-    ) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> where Machines.Trigger == IntTrigger, Machines.Effect == IntEffect {
+            (Message) -> Void
+        ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect, Message>
+    ) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect, Message> where Machines.Trigger == IntTrigger, Machines.Effect == IntEffect, Machines.Message == Message {
         Feature(machines: machines.machines) {
             transit(machines, $0, $1)
         }
