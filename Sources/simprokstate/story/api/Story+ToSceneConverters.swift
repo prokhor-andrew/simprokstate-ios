@@ -5,7 +5,7 @@
 
 public extension Story {
 
-    func asScene() -> Scene<Event, Event, Message> {
+    func asScene() -> Scene<Event, Event> {
         Scene { value, logger in
             if let new = transit(value, logger) {
                 return SceneTransition(

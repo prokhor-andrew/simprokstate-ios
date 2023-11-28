@@ -8,7 +8,7 @@ extension Outline: Hashable {
         hasher.combine(id)
     }
 
-    public static func ==(lhs: Outline<IntTrigger, IntEffect, ExtTrigger, ExtEffect, Message>, rhs: Outline<IntTrigger, IntEffect, ExtTrigger, ExtEffect, Message>) -> Bool {
+    public static func ==(lhs: Outline<IntTrigger, IntEffect, ExtTrigger, ExtEffect>, rhs: Outline<IntTrigger, IntEffect, ExtTrigger, ExtEffect>) -> Bool {
         lhs.id == rhs.id
     }
 }

@@ -9,7 +9,7 @@ extension Story: Hashable {
         hasher.combine(id)
     }
 
-    public static func ==(lhs: Story<Event, Message>, rhs: Story<Event, Message>) -> Bool {
+    public static func ==(lhs: Story<Event>, rhs: Story<Event>) -> Bool {
         lhs.id == rhs.id
     }
 }

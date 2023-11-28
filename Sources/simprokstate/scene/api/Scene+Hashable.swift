@@ -9,7 +9,7 @@ extension Scene: Hashable {
         hasher.combine(id)
     }
 
-    public static func ==(lhs: Scene<Trigger, Effect, Message>, rhs: Scene<Trigger, Effect, Message>) -> Bool {
+    public static func ==(lhs: Scene<Trigger, Effect>, rhs: Scene<Trigger, Effect>) -> Bool {
         lhs.id == rhs.id
     }
 }

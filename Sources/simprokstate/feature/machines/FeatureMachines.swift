@@ -7,8 +7,7 @@ import simprokmachine
 public protocol FeatureMachines: Sendable {
     associatedtype Trigger: Sendable
     associatedtype Effect: Sendable
-    associatedtype Message
 
-    var machines: Set<Machine<Effect, Trigger, Message>> { get }
+    var machines: Set<Machine<Effect, Trigger>> { get }
 }
 

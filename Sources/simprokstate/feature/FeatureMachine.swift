@@ -7,39 +7,39 @@ import simprokmachine
 public extension Machine {
 
     init<IntTrigger, IntEffect>(
-        _ feature: @escaping @Sendable () -> Feature<IntTrigger, IntEffect, Input, Output, Message>
+        _ feature: @escaping @Sendable () -> Feature<IntTrigger, IntEffect, Input, Output>
     ) {
-        self.init { logger in
+        self.init { id, logger in
             FeatureHolder<IntTrigger, IntEffect, Input, Output>(
                 initial: feature,
                 logger: logger
             )
-        } onChange: {
-            $0.onChange($1)
-        } onProcess: {
-            await $0.onProcess($1)
+        } onChange: { obj, id, callback in
+            obj.onChange(callback)
+        } onProcess: { obj, id, input in
+            await obj.onProcess(input)
         }
     }
 
     
     private actor FeatureHolder<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
         
-        private let logger: (Message) -> Void
+        private let logger: (Loggable) -> Void
         
-        private let initial: () -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect, Message>
+        private let initial: () -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
         
         private var callback: MachineCallback<ExtEffect>?
-        private var processes: [Machine<IntEffect, IntTrigger, Message>: Process<IntEffect, IntTrigger, Message>] = [:]
+        private var processes: [Machine<IntEffect, IntTrigger>: Process<IntEffect, IntTrigger>] = [:]
         private var transit: Optional<
             (
                 FeatureEvent<IntTrigger, ExtTrigger>,
-                (Message) -> Void
-            ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect, Message>?
+                (Loggable) -> Void
+            ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?
         > = nil
         
         internal init(
-            initial: @escaping () -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect, Message>,
-            logger: @escaping (Message) -> Void
+            initial: @escaping () -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
+            logger: @escaping (Loggable) -> Void
         ) {
             self.initial = initial
             self.logger = logger
@@ -74,7 +74,7 @@ public extension Machine {
             
             guard let transition = _transit(event, logger) else { return }
             
-            var existing: [Process<IntEffect, IntTrigger, Message>] = []
+            var existing: [Process<IntEffect, IntTrigger>] = []
             
             processes = transition.state.machines.reduce([:]) { partialResult, element in
                 if let value = processes[element] {
