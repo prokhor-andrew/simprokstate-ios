@@ -33,7 +33,7 @@ public extension Machine {
         private var transit: Optional<
             (
                 FeatureEvent<IntTrigger, ExtTrigger>,
-                (Loggable) -> Void
+                @escaping (Loggable) -> Void
             ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?
         > = nil
         

@@ -6,20 +6,24 @@ import simprokmachine
 
 public struct Outline<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sendable, ExtEffect: Sendable>: Identifiable, Sendable {
     
-    public let id: String = .id
+    public let id: String
     
     public let transit: @Sendable (
         FeatureEvent<IntTrigger, ExtTrigger>,
-        (Loggable) -> Void
+        @escaping (Loggable) -> Void
     ) -> OutlineTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
     
 
     public init(
         transit: @Sendable @escaping (
-            FeatureEvent<IntTrigger, ExtTrigger>,
-            (Loggable) -> Void
+            OutlineExtras,
+            FeatureEvent<IntTrigger, ExtTrigger>
         ) -> OutlineTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
     ) {
-        self.transit = transit
+        let id: String = .id
+        self.id = id
+        self.transit = {
+            transit(OutlineExtras(id: id, logger: $1), $0)
+        }
     }
 }
