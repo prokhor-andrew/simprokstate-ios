@@ -7,10 +7,11 @@ import simprokmachine
 public extension Machine {
 
     init<IntTrigger, IntEffect>(
-        _ feature: @escaping @Sendable () -> Feature<IntTrigger, IntEffect, Input, Output>
+        _ feature: @escaping @Sendable (String) -> Feature<IntTrigger, IntEffect, Input, Output>
     ) {
         self.init { id, logger in
             FeatureHolder<IntTrigger, IntEffect, Input, Output>(
+                id: id,
                 initial: feature,
                 logger: logger
             )
@@ -24,9 +25,10 @@ public extension Machine {
     
     private actor FeatureHolder<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
         
+        private let id: String
         private let logger: (Loggable) -> Void
         
-        private let initial: () -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+        private let initial: (String) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
         
         private var callback: MachineCallback<ExtEffect>?
         private var processes: [Machine<IntEffect, IntTrigger>: Process<IntEffect, IntTrigger>] = [:]
@@ -38,9 +40,11 @@ public extension Machine {
         > = nil
         
         internal init(
-            initial: @escaping () -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
+            id: String,
+            initial: @escaping (String) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
             logger: @escaping (Loggable) -> Void
         ) {
+            self.id = id
             self.initial = initial
             self.logger = logger
         }
@@ -49,7 +53,7 @@ public extension Machine {
             self.callback = callback
             
             if callback != nil {
-                let state = initial()
+                let state = initial(id)
                 
                 processes = state.machines.reduce([:]) { partialResult, element in
                     var copy = partialResult
