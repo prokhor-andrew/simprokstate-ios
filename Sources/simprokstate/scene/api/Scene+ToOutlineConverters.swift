@@ -9,7 +9,7 @@ public extension Scene {
         Outline { extras, trigger in
             switch trigger {
             case .ext(let value):
-                let new = transit(value, extras.logger)
+                let new = transit(value, extras.machineId, extras.logger)
                 return OutlineTransition(
                     new.state.asExtTriggerExtEffect(),
                     effects: new.effects.map { .ext($0) }
@@ -24,7 +24,7 @@ public extension Scene {
         Outline { extras, trigger in
             switch trigger {
             case .ext(let value):
-                let new = transit(value, extras.logger)
+                let new = transit(value, extras.machineId, extras.logger)
                 return OutlineTransition(
                     new.state.asIntEffectExtTrigger(),
                     effects: new.effects.map {
@@ -43,7 +43,7 @@ public extension Scene {
             case .ext:
                 return OutlineTransition(asIntTriggerExtEffect())
             case .int(let value):
-                let new = transit(value, extras.logger)
+                let new = transit(value, extras.machineId, extras.logger)
                 return OutlineTransition(
                     new.state.asIntTriggerExtEffect(),
                     effects: new.effects.map {
@@ -60,7 +60,7 @@ public extension Scene {
             case .ext:
                 return OutlineTransition(asIntTriggerIntEffect())
             case .int(let value):
-                let new = transit(value, extras.logger)
+                let new = transit(value, extras.machineId, extras.logger)
                 return OutlineTransition(
                     new.state.asIntTriggerIntEffect(),
                     effects: new.effects.map {
@@ -76,7 +76,7 @@ public extension Scene {
         Outline { extras, trigger in
             switch trigger {
             case .ext(let value):
-                let new = transit(value, extras.logger)
+                let new = transit(value, extras.machineId, extras.logger)
                 return OutlineTransition(
                     new.state.asIntEffectExtTriggerExtEffect(),
                     effects: new.effects.flatMap {
@@ -95,7 +95,7 @@ public extension Scene {
             case .ext:
                 return OutlineTransition(asIntTriggerIntEffectExtEffect())
             case .int(let value):
-                let new = transit(value, extras.logger)
+                let new = transit(value, extras.machineId, extras.logger)
                 return OutlineTransition(
                     new.state.asIntTriggerIntEffectExtEffect(),
                     effects: new.effects.flatMap {
@@ -111,7 +111,7 @@ public extension Scene {
             switch trigger {
             case .ext(let value),
                  .int(let value):
-                let new = transit(value, extras.logger)
+                let new = transit(value, extras.machineId, extras.logger)
                 return OutlineTransition(
                     new.state.asIntTriggerIntEffectExtTrigger(),
                     effects: new.effects.map {
@@ -127,7 +127,7 @@ public extension Scene {
             switch trigger {
             case .ext(let value),
                  .int(let value):
-                let new = transit(value, extras.logger)
+                let new = transit(value, extras.machineId, extras.logger)
                 return OutlineTransition(
                     new.state.asIntTriggerExtTriggerExtEffect(),
                     effects: new.effects.map {
@@ -143,7 +143,7 @@ public extension Scene {
             switch trigger {
             case .ext(let value),
                  .int(let value):
-                let new = transit(value, extras.logger)
+                let new = transit(value, extras.machineId, extras.logger)
                 return OutlineTransition(
                     new.state.asIntTriggerIntEffectExtTriggerExtEffect(),
                     effects: new.effects.flatMap {

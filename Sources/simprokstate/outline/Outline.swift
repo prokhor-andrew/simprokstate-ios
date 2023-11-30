@@ -10,6 +10,7 @@ public struct Outline<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sen
     
     public let transit: @Sendable (
         FeatureEvent<IntTrigger, ExtTrigger>,
+        String,
         @escaping (Loggable) -> Void
     ) -> OutlineTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
     
@@ -23,7 +24,7 @@ public struct Outline<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sen
         let id: String = .id
         self.id = id
         self.transit = {
-            transit(OutlineExtras(id: id, logger: $1), $0)
+            transit(OutlineExtras(id: id, machineId: $1, logger: $2), $0)
         }
     }
 }
