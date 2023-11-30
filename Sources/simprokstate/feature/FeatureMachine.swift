@@ -35,6 +35,7 @@ public extension Machine {
         private var transit: Optional<
             (
                 FeatureEvent<IntTrigger, ExtTrigger>,
+                String,
                 @escaping (Loggable) -> Void
             ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?
         > = nil
@@ -76,7 +77,7 @@ public extension Machine {
         private func handle(_ event: FeatureEvent<IntTrigger, ExtTrigger>) async {
             guard let _transit = transit else { return }
             
-            guard let transition = _transit(event, logger) else { return }
+            guard let transition = _transit(event, id, logger) else { return }
             
             var existing: [Process<IntEffect, IntTrigger>] = []
             

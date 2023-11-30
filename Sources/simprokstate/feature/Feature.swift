@@ -13,6 +13,7 @@ public struct Feature<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sen
     public let machines: Set<Machine<IntEffect, IntTrigger>>
     public let transit: @Sendable (
         FeatureEvent<IntTrigger, ExtTrigger>,
+        String,
         @escaping (Loggable) -> Void
     ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
 
@@ -21,6 +22,7 @@ public struct Feature<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sen
         machines: Set<Machine<IntEffect, IntTrigger>>,
         transit: @Sendable @escaping (
             FeatureEvent<IntTrigger, ExtTrigger>,
+            String,
             @escaping (Loggable) -> Void
         ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
     ) {
@@ -37,8 +39,8 @@ public struct Feature<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sen
         ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
     ) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> where Machines.Trigger == IntTrigger, Machines.Effect == IntEffect {
         let id: String = .id
-        return Feature(id: id, machines: machines.machines) { trigger, logger in
-            transit(FeatureExtras(id: id, machines: machines, logger: logger), trigger)
+        return Feature(id: id, machines: machines.machines) { trigger, machineId, logger in
+            transit(FeatureExtras(id: id, machineId: machineId, machines: machines, logger: logger), trigger)
         }
     }
 }
