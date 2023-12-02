@@ -15,9 +15,9 @@ public extension Machine {
                 initial: feature,
                 logger: logger
             )
-        } onChange: { obj, id, callback in
+        } onChange: { obj, callback in
             obj.onChange(callback)
-        } onProcess: { obj, id, input in
+        } onProcess: { obj, input in
             await obj.onProcess(input)
         }
     }
