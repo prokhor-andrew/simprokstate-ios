@@ -3,14 +3,16 @@
 //
 
 
-extension FeatureEvent: CustomStringConvertible where Internal: CustomStringConvertible, External: CustomStringConvertible {
+extension FeatureEvent: CustomStringConvertible, CustomDebugStringConvertible {
 
     public var description: String {
         switch self {
         case .ext(let value):
-            return "External event: " + value.description
+            return "External event: \(value)"
         case .int(let value):
-            return "Internal event: " + value.description
+            return "Internal event: \(value)"
         }
     }
+    
+    public var debugDescription: String { description }
 }

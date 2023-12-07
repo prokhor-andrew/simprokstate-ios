@@ -58,9 +58,9 @@ public extension Machine {
                 
                 processes = state.machines.reduce([:]) { partialResult, element in
                     var copy = partialResult
-                    copy[element] = element.run {
+                    copy[element] = element.run { [weak self] in self?.logger($0) } onConsume: {
                         await handle(.int($0))
-                    } logger: { [weak self] in self?.logger($0) }
+                    }
                     return copy
                 }
                 transit = state.transit
@@ -89,7 +89,13 @@ public extension Machine {
                     return copy
                 } else {
                     var copy = partialResult
-                    copy[element] = element.run { await handle(.int($0)) } logger: { [weak self] in self?.logger($0) }
+                    
+                    copy[element] = element.run {
+                        [weak self] in self?.logger($0)
+                    } onConsume: {
+                        await handle(.int($0))
+                    }
+
                     return copy
                 }
             }
