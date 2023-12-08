@@ -26,7 +26,7 @@ public extension Machine {
     private actor FeatureHolder<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
         
         private let id: String
-        private let logger: (Loggable) -> Void
+        private let logger: @Sendable (Loggable) -> Void
         
         private let initial: (String) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
         
@@ -36,14 +36,14 @@ public extension Machine {
             (
                 FeatureEvent<IntTrigger, ExtTrigger>,
                 String,
-                @escaping (Loggable) -> Void
+                @escaping @Sendable (Loggable) -> Void
             ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?
         > = nil
         
         internal init(
             id: String,
             initial: @escaping (String) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
-            logger: @escaping (Loggable) -> Void
+            logger: @escaping @Sendable (Loggable) -> Void
         ) {
             self.id = id
             self.initial = initial

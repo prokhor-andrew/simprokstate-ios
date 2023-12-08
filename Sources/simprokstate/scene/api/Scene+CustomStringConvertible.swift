@@ -3,9 +3,11 @@
 //
 
 
-extension Scene: CustomStringConvertible {
+extension Scene: CustomStringConvertible, CustomDebugStringConvertible {
 
     public var description: String {
         "Scene id: \(id)"
     }
+    
+    public var debugDescription: String { description }
 }

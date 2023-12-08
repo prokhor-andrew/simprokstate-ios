@@ -18,3 +18,8 @@ public struct DataMachines<Data: Sendable, Trigger: Sendable, Effect: Sendable>:
         self.init(data, machines: Set(machines))
     }
 }
+
+
+extension DataMachines: CustomStringConvertible, CustomDebugStringConvertible {
+    
+}

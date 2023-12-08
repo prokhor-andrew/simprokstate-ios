@@ -16,3 +16,8 @@ public struct SetOfMachines<Trigger: Sendable, Effect: Sendable>: FeatureMachine
         self.init(Set(machines))
     }
 }
+
+
+extension SetOfMachines: CustomStringConvertible, CustomDebugStringConvertible {
+    
+}

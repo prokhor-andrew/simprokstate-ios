@@ -3,9 +3,11 @@
 //
 
 
-extension Outline: CustomStringConvertible {
+extension Outline: CustomStringConvertible, CustomDebugStringConvertible {
 
     public var description: String {
         "Outline id: \(id)"
     }
+    
+    public var debugDescription: String { description }
 }

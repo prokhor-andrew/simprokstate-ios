@@ -7,15 +7,24 @@
 
 import simprokmachine
 
-public struct OutlineExtras: Identifiable {
+public struct OutlineExtras: Identifiable, Sendable {
     
     public let id: String
     public let machineId: String
-    public let logger: (Loggable) -> Void
+    public let logger: @Sendable (Loggable) -> Void
     
-    internal init(id: String, machineId: String, logger: @escaping (Loggable) -> Void) {
+    internal init(id: String, machineId: String, logger: @escaping @Sendable (Loggable) -> Void) {
         self.id = id
         self.machineId = machineId
         self.logger = logger
     }
+}
+
+extension OutlineExtras: CustomStringConvertible, CustomDebugStringConvertible {
+    
+    public var description: String {
+        "id=\(id), machineId=\(machineId)"
+    }
+    
+    public var debugDescription: String { description }
 }

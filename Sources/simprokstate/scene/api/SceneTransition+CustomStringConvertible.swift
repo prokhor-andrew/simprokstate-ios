@@ -3,9 +3,11 @@
 //
 
 
-extension SceneTransition: CustomStringConvertible {
+extension SceneTransition: CustomStringConvertible, CustomDebugStringConvertible {
 
     public var description: String {
         "Transition into " + state.description + ", with effects [" + effects.description + "]"
     }
+    
+    public var debugDescription: String { description }
 }

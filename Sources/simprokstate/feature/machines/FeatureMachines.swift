@@ -11,3 +11,9 @@ public protocol FeatureMachines: Sendable {
     var machines: Set<Machine<Effect, Trigger>> { get }
 }
 
+extension FeatureMachines where Self: CustomStringConvertible, Self: CustomDebugStringConvertible {
+    
+    public var description: String { "machines=\(machines)" }
+    
+    public  var debugDescription: String { description }
+}

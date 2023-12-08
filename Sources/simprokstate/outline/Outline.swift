@@ -11,7 +11,7 @@ public struct Outline<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sen
     public let transit: @Sendable (
         FeatureEvent<IntTrigger, ExtTrigger>,
         String,
-        @escaping (Loggable) -> Void
+        @escaping @Sendable (Loggable) -> Void
     ) -> OutlineTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
     
 

@@ -10,7 +10,7 @@ import simprokmachine
 public struct Story<Event: Sendable>: Identifiable, Sendable {
     
     public let id: String
-    public let transit: @Sendable (Event, String, @escaping (Loggable) -> Void) -> Story<Event>?
+    public let transit: @Sendable (Event, String, @escaping @Sendable (Loggable) -> Void) -> Story<Event>?
 
     public init(transit: @escaping @Sendable (StoryExtras, Event) -> Story<Event>?) {
         let id: String = .id
