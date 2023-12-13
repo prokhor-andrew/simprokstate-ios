@@ -58,7 +58,7 @@ public extension Machine {
                 
                 processes = state.machines.reduce([:]) { partialResult, element in
                     var copy = partialResult
-                    copy[element] = ProcessWrapper(element.run(logger: logger) { _, _, output, _ in
+                    copy[element] = ProcessWrapper(element.run(logger: logger) { output, _ in
                         await handle(.int(output))
                     })
                     return copy
@@ -90,7 +90,7 @@ public extension Machine {
                 } else {
                     var copy = partialResult
                     
-                    copy[element] = ProcessWrapper(element.run(logger: logger) { _, _, output, _ in
+                    copy[element] = ProcessWrapper(element.run(logger: logger) { output, _ in
                         await handle(.int(output))
                     })
                     
