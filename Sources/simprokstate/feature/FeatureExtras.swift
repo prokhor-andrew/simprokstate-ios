@@ -12,13 +12,13 @@ public struct FeatureExtras<Machines: FeatureMachines>: Identifiable, Sendable {
     public let id: String
     public let machineId: String
     public let machines: Machines
-    public let logger: @Sendable (Loggable) -> Void
+    public let logger: MachineLogger
     
     internal init(
         id: String,
         machineId: String,
         machines: Machines,
-        logger: @escaping @Sendable (Loggable) -> Void
+        logger: MachineLogger
     ) {
         self.id = id
         self.machineId = machineId

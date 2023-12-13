@@ -11,9 +11,9 @@ public struct OutlineExtras: Identifiable, Sendable {
     
     public let id: String
     public let machineId: String
-    public let logger: @Sendable (Loggable) -> Void
+    public let logger: MachineLogger
     
-    internal init(id: String, machineId: String, logger: @escaping @Sendable (Loggable) -> Void) {
+    internal init(id: String, machineId: String, logger: MachineLogger) {
         self.id = id
         self.machineId = machineId
         self.logger = logger

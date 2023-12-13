@@ -14,7 +14,7 @@ public struct Feature<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sen
     public let transit: @Sendable (
         FeatureEvent<IntTrigger, ExtTrigger>,
         String,
-        @escaping @Sendable (Loggable) -> Void
+        MachineLogger
     ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
 
     private init(
@@ -23,7 +23,7 @@ public struct Feature<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sen
         transit: @Sendable @escaping (
             FeatureEvent<IntTrigger, ExtTrigger>,
             String,
-            @escaping @Sendable (Loggable) -> Void
+            MachineLogger
         ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
     ) {
         self.id = id
