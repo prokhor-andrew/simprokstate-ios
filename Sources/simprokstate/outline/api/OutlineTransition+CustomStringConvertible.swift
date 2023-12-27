@@ -5,7 +5,7 @@
 extension OutlineTransition: CustomStringConvertible, CustomDebugStringConvertible {
 
     public var description: String {
-        "Transition into " + state.description + ", with effects [" + effects.description + "]"
+        "OutlineTransition<\(Payload.self), \(IntTrigger.self), \(IntEffect.self), \(ExtTrigger.self), \(ExtEffect.self)> state=\(state) _ effects=\(effects)"
     }
     
     public var debugDescription: String { description }

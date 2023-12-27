@@ -2,57 +2,59 @@
 // Created by Andriy Prokhorenko on 14.02.2023.
 //
 
+import simprokmachine
+
 public extension Story {
 
-    func asExtTriggerExtEffect<IntTrigger, IntEffect>() -> Feature<IntTrigger, IntEffect, Event, Event> {
-        asExtTriggerExtEffect().asFeature(SetOfMachines())
+    func asExtTriggerExtEffect<IntTrigger, IntEffect>() -> Feature<Payload, IntTrigger, IntEffect, Event, Event> {
+        asExtTriggerExtEffect().asFeature([])
     }
 
-    func asIntEffectExtTrigger<ExtEffect, Machines: FeatureMachines>(
-        _ machines: Machines
-    ) -> Feature<Machines.Trigger, Event, Event, ExtEffect> where Machines.Effect == Event {
+    func asIntEffectExtTrigger<IntTrigger, ExtEffect>(
+        _ machines: Set<Machine<Event, IntTrigger>>
+    ) -> Feature<Payload, IntTrigger, Event, Event, ExtEffect> {
         asIntEffectExtTrigger().asFeature(machines)
     }
 
-    func asIntTriggerExtEffect<ExtTrigger, Machines: FeatureMachines>(
-        _ machines: Machines
-    ) -> Feature<Event, Machines.Effect, ExtTrigger, Event> where Machines.Trigger == Event {
+    func asIntTriggerExtEffect<IntEffect, ExtTrigger>(
+        _ machines: Set<Machine<IntEffect, Event>>
+    ) -> Feature<Payload, Event, IntEffect, ExtTrigger, Event> {
         asIntTriggerExtEffect().asFeature(machines)
     }
 
-    func asIntTriggerIntEffect<ExtTrigger, ExtEffect, Machines: FeatureMachines>(
-        _ machines: Machines
-    ) -> Feature<Event, Event, ExtTrigger, ExtEffect> where Machines.Trigger == Event, Machines.Effect == Event {
+    func asIntTriggerIntEffect<ExtTrigger, ExtEffect>(
+        _ machines: Set<Machine<Event, Event>>
+    ) -> Feature<Payload, Event, Event, ExtTrigger, ExtEffect> {
         asIntTriggerIntEffect().asFeature(machines)
     }
 
-    func asIntEffectExtTriggerExtEffect<Machines: FeatureMachines>(
-        _ machines: Machines
-    ) -> Feature<Machines.Trigger, Event, Event, Event> where Machines.Effect == Event {
+    func asIntEffectExtTriggerExtEffect<IntTrigger>(
+        _ machines: Set<Machine<Event, IntTrigger>>
+    ) -> Feature<Payload, IntTrigger, Event, Event, Event> {
         asIntEffectExtTriggerExtEffect().asFeature(machines)
     }
 
-    func asIntTriggerIntEffectExtEffect<ExtTrigger, Machines: FeatureMachines>(
-        _ machines: Machines
-    ) -> Feature<Event, Event, ExtTrigger, Event> where Machines.Trigger == Event, Machines.Effect == Event {
+    func asIntTriggerIntEffectExtEffect<ExtTrigger>(
+        _ machines: Set<Machine<Event, Event>>
+    ) -> Feature<Payload, Event, Event, ExtTrigger, Event> {
         asIntTriggerIntEffectExtEffect().asFeature(machines)
     }
 
-    func asIntTriggerIntEffectExtTrigger<ExtEffect, Machines: FeatureMachines>(
-        _ machines: Machines
-    ) -> Feature<Event, Event, Event, ExtEffect> where Machines.Trigger == Event, Machines.Effect == Event {
+    func asIntTriggerIntEffectExtTrigger<ExtEffect>(
+        _ machines: Set<Machine<Event, Event>>
+    ) -> Feature<Payload, Event, Event, Event, ExtEffect> {
         asIntTriggerIntEffectExtTrigger().asFeature(machines)
     }
 
-    func asIntTriggerExtTriggerExtEffect<Machines: FeatureMachines>(
-        _ machines: Machines
-    ) -> Feature<Event, Machines.Effect, Event, Event> where Machines.Trigger == Event, Machines.Effect == Event {
+    func asIntTriggerExtTriggerExtEffect<IntEffect>(
+        _ machines: Set<Machine<IntEffect, Event>>
+    ) -> Feature<Payload, Event, IntEffect, Event, Event> {
         asIntTriggerExtTriggerExtEffect().asFeature(machines)
     }
 
-    func asIntTriggerIntEffectExtTriggerExtEffect<Machines: FeatureMachines>(
-        _ machines: Machines
-    ) -> Feature<Event, Event, Event, Event> where Machines.Trigger == Event, Machines.Effect == Event {
+    func asIntTriggerIntEffectExtTriggerExtEffect(
+        _ machines: Set<Machine<Event, Event>>
+    ) -> Feature<Payload, Event, Event, Event, Event> {
         asIntTriggerIntEffectExtTriggerExtEffect().asFeature(machines)
     }
 }

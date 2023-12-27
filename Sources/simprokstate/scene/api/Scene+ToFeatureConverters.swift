@@ -2,57 +2,59 @@
 // Created by Andriy Prokhorenko on 17.02.2023.
 //
 
+import simprokmachine
+
 public extension Scene {
 
-    func asExtTriggerExtEffect<IntTrigger, IntEffect>() -> Feature<IntTrigger, IntEffect, Trigger, Effect> {
-        asExtTriggerExtEffect().asFeature(SetOfMachines())
+    func asExtTriggerExtEffect<IntTrigger, IntEffect>() -> Feature<Payload, IntTrigger, IntEffect, Trigger, Effect> {
+        asExtTriggerExtEffect().asFeature([])
     }
 
-    func asIntEffectExtTrigger<ExtEffect, Machines: FeatureMachines>(
-        _ machines: Machines
-    ) -> Feature<Machines.Trigger, Effect, Trigger, ExtEffect> where Machines.Effect == Effect {
+    func asIntEffectExtTrigger<IntTrigger, ExtEffect>(
+        _ machines: Set<Machine<Effect, IntTrigger>>
+    ) -> Feature<Payload, IntTrigger, Effect, Trigger, ExtEffect> {
         asIntEffectExtTrigger().asFeature(machines)
     }
 
-    func asIntTriggerExtEffect<ExtTrigger, Machines: FeatureMachines>(
-        _ machines: Machines
-    ) -> Feature<Trigger, Machines.Effect, ExtTrigger, Effect> where Machines.Trigger == Trigger {
+    func asIntTriggerExtEffect<IntEffect, ExtTrigger>(
+        _ machines: Set<Machine<IntEffect, Trigger>>
+    ) -> Feature<Payload, Trigger, IntEffect, ExtTrigger, Effect> {
         asIntTriggerExtEffect().asFeature(machines)
     }
 
-    func asIntTriggerIntEffect<ExtTrigger, ExtEffect, Machines: FeatureMachines>(
-        _ machines: Machines
-    ) -> Feature<Trigger, Effect, ExtTrigger, ExtEffect> where Machines.Trigger == Trigger, Machines.Effect == Effect {
+    func asIntTriggerIntEffect<ExtTrigger, ExtEffect>(
+        _ machines: Set<Machine<Effect, Trigger>>
+    ) -> Feature<Payload, Trigger, Effect, ExtTrigger, ExtEffect> {
         asIntTriggerIntEffect().asFeature(machines)
     }
 
-    func asIntEffectExtTriggerExtEffect<Machines: FeatureMachines>(
-        _ machines: Machines
-    ) -> Feature<Machines.Trigger, Effect, Trigger, Effect> where Machines.Effect == Effect {
+    func asIntEffectExtTriggerExtEffect<IntTrigger>(
+        _ machines: Set<Machine<Effect, IntTrigger>>
+    ) -> Feature<Payload, IntTrigger, Effect, Trigger, Effect> {
         asIntEffectExtTriggerExtEffect().asFeature(machines)
     }
 
-    func asIntTriggerIntEffectExtEffect<ExtTrigger, Machines: FeatureMachines>(
-        _ machines: Machines
-    ) -> Feature<Trigger, Effect, ExtTrigger, Effect> where Machines.Trigger == Trigger, Machines.Effect == Effect {
+    func asIntTriggerIntEffectExtEffect<ExtTrigger>(
+        _ machines: Set<Machine<Effect, Trigger>>
+    ) -> Feature<Payload, Trigger, Effect, ExtTrigger, Effect> {
         asIntTriggerIntEffectExtEffect().asFeature(machines)
     }
 
-    func asIntTriggerIntEffectExtTrigger<ExtEffect, Machines: FeatureMachines>(
-        _ machines: Machines
-    ) -> Feature<Trigger, Effect, Trigger, ExtEffect> where Machines.Trigger == Trigger, Machines.Effect == Effect {
+    func asIntTriggerIntEffectExtTrigger<ExtEffect>(
+        _ machines: Set<Machine<Effect, Trigger>>
+    ) -> Feature<Payload, Trigger, Effect, Trigger, ExtEffect> {
         asIntTriggerIntEffectExtTrigger().asFeature(machines)
     }
 
-    func asIntTriggerExtTriggerExtEffect<Machines: FeatureMachines>(
-        _ machines: Machines
-    ) -> Feature<Trigger, Machines.Effect, Trigger, Effect> where Machines.Trigger == Trigger, Machines.Effect == Effect {
+    func asIntTriggerExtTriggerExtEffect<IntEffect>(
+        _ machines: Set<Machine<IntEffect, Trigger>>
+    ) -> Feature<Payload, Trigger, IntEffect, Trigger, Effect> {
         asIntTriggerExtTriggerExtEffect().asFeature(machines)
     }
 
-    func asIntTriggerIntEffectExtTriggerExtEffect<Machines: FeatureMachines>(
-        _ machines: Machines
-    ) -> Feature<Trigger, Effect, Trigger, Effect> where Machines.Trigger == Trigger, Machines.Effect == Effect {
+    func asIntTriggerIntEffectExtTriggerExtEffect(
+        _ machines: Set<Machine<Effect, Trigger>>
+    ) -> Feature<Payload, Trigger, Effect, Trigger, Effect> {
         asIntTriggerIntEffectExtTriggerExtEffect().asFeature(machines)
     }
 }

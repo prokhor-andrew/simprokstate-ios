@@ -7,20 +7,20 @@
 
 import simprokmachine
 
-public struct FeatureExtras<Machines: FeatureMachines>: Identifiable, Sendable {
+public struct FeatureExtras<Payload: Sendable, IntTrigger: Sendable, IntEffect: Sendable>: Sendable {
     
-    public let id: String
+    public let payload: Payload
     public let machineId: String
-    public let machines: Machines
+    public let machines: Set<Machine<IntEffect, IntTrigger>>
     public let logger: MachineLogger
     
     internal init(
-        id: String,
+        payload: Payload,
         machineId: String,
-        machines: Machines,
+        machines: Set<Machine<IntEffect, IntTrigger>>,
         logger: MachineLogger
     ) {
-        self.id = id
+        self.payload = payload
         self.machineId = machineId
         self.machines = machines
         self.logger = logger
@@ -29,7 +29,9 @@ public struct FeatureExtras<Machines: FeatureMachines>: Identifiable, Sendable {
 
 extension FeatureExtras: CustomStringConvertible, CustomDebugStringConvertible {
     
-    public var description: String { "id=\(id) _ machineId=\(machineId) _ machines=\(machines)" }
+    public var description: String {
+        "FeatureExtras<\(Payload.self), \(IntTrigger.self), \(IntEffect.self)> payload=\(payload) _ machineId=\(machineId) _ machines=\(machines)"
+    }
     
     public var debugDescription: String { description }
 }

@@ -7,16 +7,15 @@
 
 import simprokmachine
 
-public struct Story<Event: Sendable>: Identifiable, Sendable {
+public struct Story<Payload: Sendable, Event: Sendable>: Sendable {
     
-    public let id: String
-    public let transit: @Sendable (Event, String, MachineLogger) -> Story<Event>?
+    public let payload: Payload
+    public let transit: @Sendable (Event, String, MachineLogger) -> Story<Payload, Event>?
 
-    public init(transit: @escaping @Sendable (StoryExtras, Event) -> Story<Event>?) {
-        let id: String = .id
-        self.id = id
-        self.transit = {
-            transit(StoryExtras(id: id, machineId: $1, logger: $2), $0)
+    public init(payload: Payload, transit: @escaping @Sendable (StoryExtras<Payload>, Event) -> Story<Payload, Event>?) {
+        self.payload = payload
+        self.transit = { trigger, machineId, logger in
+            transit(StoryExtras(payload: payload, machineId: machineId, logger: logger), trigger)
         }
     }
 }

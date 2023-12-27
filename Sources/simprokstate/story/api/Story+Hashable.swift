@@ -3,13 +3,16 @@
 //
 
 
-extension Story: Hashable {
+extension Story: Hashable where Payload: Hashable {
 
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+        hasher.combine(payload)
     }
+}
 
-    public static func ==(lhs: Story<Event>, rhs: Story<Event>) -> Bool {
-        lhs.id == rhs.id
+extension Story: Equatable where Payload: Equatable {
+
+    public static func ==(lhs: Story<Payload, Event>, rhs: Story<Payload, Event>) -> Bool {
+        lhs.payload == rhs.payload
     }
 }

@@ -4,15 +4,17 @@
 
 import simprokmachine
 
+
+
 public extension Machine {
 
-    init<IntTrigger, IntEffect>(
-        _ feature: @escaping @Sendable (String) -> Feature<IntTrigger, IntEffect, Input, Output>
+    init<Payload, IntTrigger, IntEffect>(
+        _ feature: @escaping @Sendable (String, MachineLogger) -> Feature<Payload, IntTrigger, IntEffect, Input, Output>
     ) {
         self.init { id, logger in
-            FeatureHolder<IntTrigger, IntEffect, Input, Output>(
+            FeatureHolder<Payload, IntTrigger, IntEffect, Input, Output>(
                 id: id,
-                initial: feature,
+                initial: { feature(id, logger) },
                 logger: logger
             )
         } onChange: { obj, callback in
@@ -23,26 +25,27 @@ public extension Machine {
     }
 
 
-    private actor FeatureHolder<IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
+    private actor FeatureHolder<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
         
         private let id: String
         private let logger: MachineLogger
         
-        private let initial: (String) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+        private let initial: () -> Feature<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>
         
         private var callback: MachineCallback<ExtEffect>?
-        private var processes: [Machine<IntEffect, IntTrigger>: ProcessWrapper<IntEffect>] = [:]
+        
+        private var processes: Set<Process<IntEffect>> = []
         private var transit: Optional<
             (
                 FeatureEvent<IntTrigger, ExtTrigger>,
                 String,
                 MachineLogger
-            ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>?
+            ) -> FeatureTransition<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>
         > = nil
         
         internal init(
             id: String,
-            initial: @escaping (String) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
+            initial: @escaping () -> Feature<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
             logger: MachineLogger
         ) {
             self.id = id
@@ -54,19 +57,13 @@ public extension Machine {
             self.callback = callback
             
             if callback != nil {
-                let state = initial(id)
-                
-                processes = state.machines.reduce([:]) { partialResult, element in
-                    var copy = partialResult
-                    copy[element] = ProcessWrapper(element.run(logger: logger) { output, _ in
-                        await handle(.int(output))
-                    })
-                    return copy
-                }
+                let state = initial()
                 transit = state.transit
+                processes = Set(state.machines.map { $0.run(logger: logger) { await handle(.int($0)) } })
             } else {
-                processes = [:]
                 transit = nil
+                processes.forEach { $0.cancel() }
+                processes = []
             }
         }
         
@@ -77,68 +74,73 @@ public extension Machine {
         private func handle(_ event: FeatureEvent<IntTrigger, ExtTrigger>) async {
             guard let _transit = transit else { return }
             
-            guard let transition = _transit(event, id, logger) else { return }
+            let transition = _transit(event, id, logger)
             
-            var existing: [ProcessWrapper<IntEffect>] = []
+            let resultingMachines = transition.state.machines
             
-            processes = transition.state.machines.reduce([:]) { partialResult, element in
-                if let value = processes[element] {
-                    existing.append(value)
-                    var copy = partialResult
-                    copy[element] = value
-                    return copy
-                } else {
-                    var copy = partialResult
-                    
-                    copy[element] = ProcessWrapper(element.run(logger: logger) { output, _ in
-                        await handle(.int(output))
-                    })
-                    
-                    return copy
+            let machinesToAdd = resultingMachines.filter { machine in
+                !processes.contains(where: { process in
+                    process.id == machine.id
+                })
+            }
+            
+            let processesToRemove = processes.filter { process in
+                !resultingMachines.contains(where: { machine in
+                    process.id == machine.id
+                })
+            }
+            
+            let processesToKeep = processes.filter { process in
+                !machinesToAdd.contains(where: { machine in
+                    machine.id == process.id
+                })
+                &&
+                !processesToRemove.contains(where: { processToRemove in
+                    process.id == processToRemove.id
+                })
+            }
+            
+            processesToRemove.forEach { $0.cancel() }
+            let processesToAdd = machinesToAdd.map { machine in
+                machine.run(logger: logger) { output in
+                    await handle(.int(output))
                 }
             }
+            
+            processes = Set(processesToKeep + processesToAdd)
             transit = transition.state.transit
             
-            for effect in transition.effects {
-                switch effect {
-                case .ext(let effect):
-                    await callback?(effect)
-                case .int(let effect):
-                    await withTaskGroup(of: Void.self) { group in
-                        existing.forEach { process in
-                            _ = group.addTaskUnlessCancelled(priority: nil) {
-                                await process.send(effect)
-                            }
+            let effects = transition.effects
+            
+            await withTaskGroup(of: Void.self) { group in
+                
+                _ = group.addTaskUnlessCancelled {
+                    for effect in effects {
+                        switch effect {
+                        case .ext(let effect):
+                            // Using self here is totally safe
+                            await self.callback?(effect)
+                        case .int:
+                            break
                         }
-                        
-                        await group.waitForAll()
                     }
                 }
+                
+                processesToKeep.forEach { process in
+                    _ = group.addTaskUnlessCancelled {
+                        for effect in effects {
+                            switch effect {
+                            case .int(let effect):
+                                await process.send(effect)
+                            case .ext:
+                                break
+                            }
+                        }
+                    }
+                }
+                
+                await group.waitForAll()
             }
         }
-    }
-}
-
-fileprivate final class ProcessWrapper<T>: Hashable, Identifiable {
-    private let process: Process<T>
-    
-    init(_ process: Process<T>) {
-        self.process = process
-    }
-    
-    func send(_ input: T) async {
-        await process.send(input)
-    }
-    
-    deinit {
-        process.cancel()
-    }
-    
-    static func == (lhs: ProcessWrapper<T>, rhs: ProcessWrapper<T>) -> Bool {
-        lhs.process == rhs.process
-    }
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(process)
     }
 }

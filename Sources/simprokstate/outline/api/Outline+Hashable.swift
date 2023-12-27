@@ -2,13 +2,19 @@
 // Created by Andriy Prokhorenko on 19.02.2023.
 //
 
-extension Outline: Hashable {
+extension Outline: Hashable where Payload: Hashable {
 
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+        hasher.combine(payload)
     }
+}
 
-    public static func ==(lhs: Outline<IntTrigger, IntEffect, ExtTrigger, ExtEffect>, rhs: Outline<IntTrigger, IntEffect, ExtTrigger, ExtEffect>) -> Bool {
-        lhs.id == rhs.id
+extension Outline: Equatable where Payload: Equatable {
+    
+    public static func ==(
+        lhs: Outline<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
+        rhs: Outline<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+    ) -> Bool {
+        lhs.payload == rhs.payload
     }
 }

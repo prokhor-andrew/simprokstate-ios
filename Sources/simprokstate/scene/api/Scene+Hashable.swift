@@ -3,13 +3,16 @@
 //
 
 
-extension Scene: Hashable {
+extension Scene: Hashable where Payload: Hashable {
 
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+        hasher.combine(payload)
     }
+}
 
-    public static func ==(lhs: Scene<Trigger, Effect>, rhs: Scene<Trigger, Effect>) -> Bool {
-        lhs.id == rhs.id
+extension Scene: Equatable where Payload: Equatable {
+
+    public static func ==(lhs: Scene<Payload, Trigger, Effect>, rhs: Scene<Payload, Trigger, Effect>) -> Bool {
+        lhs.payload == rhs.payload
     }
 }

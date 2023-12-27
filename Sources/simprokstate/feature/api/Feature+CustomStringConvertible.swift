@@ -6,7 +6,7 @@
 extension Feature: CustomStringConvertible, CustomDebugStringConvertible {
 
     public var description: String {
-        "Feature id: \(id), machines [\(machines.description)]"
+        "Feature<\(Payload.self), \(IntTrigger.self), \(IntEffect.self), \(ExtTrigger.self), \(ExtEffect.self)> payload=\(payload), machines=\(machines)"
     }
     
     public var debugDescription: String { description }

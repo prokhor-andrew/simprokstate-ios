@@ -7,40 +7,40 @@
 
 import simprokmachine
 
-public struct Feature<IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sendable, ExtEffect: Sendable>: Identifiable, Sendable {
+public struct Feature<Payload: Sendable, IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sendable, ExtEffect: Sendable>: Sendable {
 
-    public let id: String
+    public let payload: Payload
     public let machines: Set<Machine<IntEffect, IntTrigger>>
     public let transit: @Sendable (
         FeatureEvent<IntTrigger, ExtTrigger>,
         String,
         MachineLogger
-    ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+    ) -> FeatureTransition<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>
 
     private init(
-        id: String,
+        payload: Payload,
         machines: Set<Machine<IntEffect, IntTrigger>>,
         transit: @Sendable @escaping (
             FeatureEvent<IntTrigger, ExtTrigger>,
             String,
             MachineLogger
-        ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+        ) -> FeatureTransition<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>
     ) {
-        self.id = id
+        self.payload = payload
         self.machines = machines
         self.transit = transit
     }
 
-    public static func create<Machines: FeatureMachines>(
-        _ machines: Machines,
+    public init(
+        payload: Payload,
+        machines: Set<Machine<IntEffect, IntTrigger>>,
         transit: @escaping (
-            FeatureExtras<Machines>,
+            FeatureExtras<Payload, IntTrigger, IntEffect>,
             FeatureEvent<IntTrigger, ExtTrigger>
-        ) -> FeatureTransition<IntTrigger, IntEffect, ExtTrigger, ExtEffect>
-    ) -> Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect> where Machines.Trigger == IntTrigger, Machines.Effect == IntEffect {
-        let id: String = .id
-        return Feature(id: id, machines: machines.machines) { trigger, machineId, logger in
-            transit(FeatureExtras(id: id, machineId: machineId, machines: machines, logger: logger), trigger)
+        ) -> FeatureTransition<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+    ) {
+        self.init(payload: payload, machines: machines) { trigger, machineId, logger in
+            transit(FeatureExtras(payload: payload, machineId: machineId, machines: machines, logger: logger), trigger)
         }
     }
 }

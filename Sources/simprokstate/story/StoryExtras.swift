@@ -8,14 +8,14 @@
 import simprokmachine
 
 
-public struct StoryExtras: Identifiable, Sendable {
+public struct StoryExtras<Payload: Sendable>: Sendable {
     
-    public let id: String
+    public let payload: Payload
     public let machineId: String
     public let logger: MachineLogger
     
-    internal init(id: String, machineId: String, logger: MachineLogger) {
-        self.id = id
+    internal init(payload: Payload, machineId: String, logger: MachineLogger) {
+        self.payload = payload
         self.machineId = machineId
         self.logger = logger
     }
@@ -25,7 +25,7 @@ extension StoryExtras: CustomStringConvertible, CustomDebugStringConvertible {
     
     
     public var description: String {
-        "id=\(id), machineId=\(machineId)"
+        "StoryExtras<\(Payload.self)> payload=\(payload) _ machineId=\(machineId)"
     }
     
     public var debugDescription: String { description }

@@ -6,7 +6,7 @@
 extension Outline: CustomStringConvertible, CustomDebugStringConvertible {
 
     public var description: String {
-        "Outline id: \(id)"
+        "Outline<\(Payload.self), \(IntTrigger.self), \(IntEffect.self), \(ExtTrigger.self), \(ExtEffect.self)> payload=\(payload)"
     }
     
     public var debugDescription: String { description }

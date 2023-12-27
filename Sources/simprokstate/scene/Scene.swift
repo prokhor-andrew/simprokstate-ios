@@ -4,16 +4,15 @@
 
 import simprokmachine
 
-public struct Scene<Trigger: Sendable, Effect: Sendable>: Identifiable, Sendable {
+public struct Scene<Payload: Sendable, Trigger: Sendable, Effect: Sendable>: Sendable {
 
-    public let id: String
-    public let transit: @Sendable (Trigger, String, MachineLogger) -> SceneTransition<Trigger, Effect>
+    public let payload: Payload
+    public let transit: @Sendable (Trigger, String, MachineLogger) -> SceneTransition<Payload, Trigger, Effect>
 
-    public init(transit: @Sendable @escaping (SceneExtras, Trigger) -> SceneTransition<Trigger, Effect>) {
-        let id: String = .id
-        self.id = id
-        self.transit = {
-            transit(SceneExtras(id: id, machineId: $1, logger: $2), $0)
+    public init(payload: Payload, transit: @Sendable @escaping (SceneExtras<Payload>, Trigger) -> SceneTransition<Payload, Trigger, Effect>) {
+        self.payload = payload
+        self.transit = { trigger, machineId, logger in
+            transit(SceneExtras(payload: payload, machineId: machineId, logger: logger), trigger)
         }
     }
 }

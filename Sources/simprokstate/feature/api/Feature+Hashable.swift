@@ -2,12 +2,15 @@
 // Created by Andriy Prokhorenko on 14.02.2023.
 //
 
-extension Feature: Hashable {
+extension Feature: Hashable where Payload: Hashable {
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+        hasher.combine(payload)
+        hasher.combine(machines)
     }
+}
 
-    public static func ==(lhs: Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>, rhs: Feature<IntTrigger, IntEffect, ExtTrigger, ExtEffect>) -> Bool {
-        lhs.id == rhs.id
+extension Feature: Equatable where Payload: Equatable {
+    public static func ==(lhs: Feature<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>, rhs: Feature<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>) -> Bool {
+        lhs.payload == rhs.payload && lhs.machines == rhs.machines
     }
 }

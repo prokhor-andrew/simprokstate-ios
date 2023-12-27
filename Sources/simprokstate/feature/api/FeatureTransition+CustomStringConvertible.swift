@@ -8,6 +8,6 @@ extension FeatureTransition: CustomStringConvertible, CustomDebugStringConvertib
     public var debugDescription: String { description }
     
     public var description: String {
-        "Transition into " + state.description + ", with effects [" + effects.description + "]"
+        "FeatureTransition<\(Payload.self), \(IntTrigger.self), \(IntEffect.self), \(ExtTrigger.self), \(ExtEffect.self)>  state=\(state) _ effects=\(effects)"
     }
 }

@@ -6,6 +6,6 @@
 extension Story: CustomStringConvertible {
 
     public var description: String {
-        "Story id: \(id)"
+        "Story<\(Payload.self), \(Event.self)> payload=\(payload)"
     }
 }

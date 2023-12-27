@@ -7,10 +7,8 @@ extension FeatureEvent: CustomStringConvertible, CustomDebugStringConvertible {
 
     public var description: String {
         switch self {
-        case .ext(let value):
-            return "External event: \(value)"
-        case .int(let value):
-            return "Internal event: \(value)"
+        case .ext(let value): "FeatureEvent<\(Internal.self), \(External.self)> ext=\(value)"
+        case .int(let value): "FeatureEvent<\(Internal.self), \(External.self)> int=\(value)"
         }
     }
     
