@@ -35,3 +35,11 @@ extension FeatureExtras: CustomStringConvertible, CustomDebugStringConvertible {
     
     public var debugDescription: String { description }
 }
+
+
+public extension Feature {
+    
+    func extras(machineId: String, logger: MachineLogger) -> FeatureExtras<Payload, IntTrigger, IntEffect> {
+        FeatureExtras(payload: payload, machineId: machineId, machines: machines, logger: logger)
+    }
+}

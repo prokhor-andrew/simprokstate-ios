@@ -30,3 +30,10 @@ extension StoryExtras: CustomStringConvertible, CustomDebugStringConvertible {
     
     public var debugDescription: String { description }
 }
+
+public extension Story {
+    
+    func extras(machineId: String, logger: MachineLogger) -> StoryExtras<Payload> {
+        StoryExtras(payload: payload, machineId: machineId, logger: logger)
+    }
+}

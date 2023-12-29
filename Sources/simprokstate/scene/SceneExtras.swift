@@ -31,3 +31,10 @@ extension SceneExtras: CustomStringConvertible, CustomDebugStringConvertible {
     
     public var debugDescription: String { description }
 }
+
+public extension Scene {
+    
+    func extras(machineId: String, logger: MachineLogger) -> SceneExtras<Payload> {
+        SceneExtras(payload: payload, machineId: machineId, logger: logger)
+    }
+}

@@ -28,3 +28,10 @@ extension OutlineExtras: CustomStringConvertible, CustomDebugStringConvertible {
     
     public var debugDescription: String { description }
 }
+
+public extension Outline {
+    
+    func extras(machineId: String, logger: MachineLogger) -> OutlineExtras<Payload> {
+        OutlineExtras(payload: payload, machineId: machineId, logger: logger)
+    }
+}
