@@ -6,7 +6,7 @@
 extension Scene: CustomStringConvertible, CustomDebugStringConvertible {
 
     public var description: String {
-        "Scene<\(Payload.self), \(Trigger.self), \(Effect.self)> payload=\(payload)"
+        "Scene<\(Payload.self), \(Trigger.self), \(Effect.self), \(Loggable.self)> payload=\(payload)"
     }
     
     public var debugDescription: String { description }

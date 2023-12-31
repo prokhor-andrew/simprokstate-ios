@@ -6,7 +6,7 @@
 extension SceneTransition: CustomStringConvertible, CustomDebugStringConvertible {
 
     public var description: String {
-        "SceneTransition<\(Payload.self), \(Trigger.self), \(Effect.self)> state=\(state) _ effects=\(effects)"
+        "SceneTransition<\(Payload.self), \(Trigger.self), \(Effect.self), \(Loggable.self)> state=\(state) _ effects=\(effects)"
     }
     
     public var debugDescription: String { description }
