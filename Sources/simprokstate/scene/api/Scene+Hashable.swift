@@ -12,7 +12,7 @@ extension Scene: Hashable where Payload: Hashable {
 
 extension Scene: Equatable where Payload: Equatable {
 
-    public static func ==(lhs: Scene<Payload, Trigger, Effect>, rhs: Scene<Payload, Trigger, Effect>) -> Bool {
+    public static func ==(lhs: Scene<Payload, Trigger, Effect, Loggable>, rhs: Scene<Payload, Trigger, Effect, Loggable>) -> Bool {
         lhs.payload == rhs.payload
     }
 }

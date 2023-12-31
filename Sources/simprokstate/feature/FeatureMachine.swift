@@ -9,7 +9,7 @@ import simprokmachine
 public extension Machine {
 
     init<Payload, IntTrigger, IntEffect>(
-        _ feature: @escaping @Sendable (String, MachineLogger) -> Feature<Payload, IntTrigger, IntEffect, Input, Output>
+        _ feature: @escaping @Sendable (String, MachineLogger<Loggable>) -> Feature<Payload, IntTrigger, IntEffect, Input, Output, Loggable>
     ) {
         self.init { id, logger in
             FeatureHolder<Payload, IntTrigger, IntEffect, Input, Output>(
@@ -28,9 +28,9 @@ public extension Machine {
     private actor FeatureHolder<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
         
         private let id: String
-        private let logger: MachineLogger
+        private let logger: MachineLogger<Loggable>
         
-        private let initial: () -> Feature<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+        private let initial: () -> Feature<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect, Loggable>
         
         private var callback: MachineCallback<ExtEffect>?
         
@@ -39,14 +39,14 @@ public extension Machine {
             (
                 FeatureEvent<IntTrigger, ExtTrigger>,
                 String,
-                MachineLogger
-            ) -> FeatureTransition<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+                MachineLogger<Loggable>
+            ) -> FeatureTransition<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect, Loggable>
         > = nil
         
         internal init(
             id: String,
-            initial: @escaping () -> Feature<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
-            logger: MachineLogger
+            initial: @escaping () -> Feature<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect, Loggable>,
+            logger: MachineLogger<Loggable>
         ) {
             self.id = id
             self.initial = initial

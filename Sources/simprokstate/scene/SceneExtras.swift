@@ -8,14 +8,14 @@
 import simprokmachine
 
 
-public struct SceneExtras<Payload: Sendable>: Sendable {
+public struct SceneExtras<Payload: Sendable, Loggable: Sendable>: Sendable {
     
     public let payload: Payload
     public let machineId: String
-    public let logger: MachineLogger
+    public let logger: MachineLogger<Loggable>
     
     
-    internal init(payload: Payload, machineId: String, logger: MachineLogger) {
+    internal init(payload: Payload, machineId: String, logger: MachineLogger<Loggable>) {
         self.payload = payload
         self.machineId = machineId
         self.logger = logger
@@ -26,7 +26,7 @@ public struct SceneExtras<Payload: Sendable>: Sendable {
 extension SceneExtras: CustomStringConvertible, CustomDebugStringConvertible {
     
     public var description: String {
-        "SceneExtras<\(Payload.self)> payload=\(payload), machineId=\(machineId)"
+        "SceneExtras<\(Payload.self), \(Loggable.self)> payload=\(payload), machineId=\(machineId)"
     }
     
     public var debugDescription: String { description }
@@ -34,7 +34,7 @@ extension SceneExtras: CustomStringConvertible, CustomDebugStringConvertible {
 
 public extension Scene {
     
-    func extras(machineId: String, logger: MachineLogger) -> SceneExtras<Payload> {
+    func extras(machineId: String, logger: MachineLogger<Loggable>) -> SceneExtras<Payload, Loggable> {
         SceneExtras(payload: payload, machineId: machineId, logger: logger)
     }
 }

@@ -5,7 +5,7 @@
 
 public extension Story {
 
-    func asScene() -> Scene<Payload, Event, Event> {
+    func asScene() -> Scene<Payload, Event, Event, Loggable> {
         Scene(payload: payload) { extras, trigger in
             if let new = transit(trigger, extras.machineId, extras.logger) {
                 return SceneTransition(

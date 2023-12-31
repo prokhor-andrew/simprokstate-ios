@@ -4,22 +4,22 @@
 
 import simprokmachine
 
-public struct Outline<Payload: Sendable, IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sendable, ExtEffect: Sendable>: Sendable {
+public struct Outline<Payload: Sendable, IntTrigger: Sendable, IntEffect: Sendable, ExtTrigger: Sendable, ExtEffect: Sendable, Loggable: Sendable>: Sendable {
     
     public let payload: Payload
     public let transit: @Sendable (
         FeatureEvent<IntTrigger, ExtTrigger>,
         String,
-        MachineLogger
-    ) -> OutlineTransition<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+        MachineLogger<Loggable>
+    ) -> OutlineTransition<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect, Loggable>
     
 
     public init(
         payload: Payload,
         transit: @Sendable @escaping (
-            OutlineExtras<Payload>,
+            OutlineExtras<Payload, Loggable>,
             FeatureEvent<IntTrigger, ExtTrigger>
-        ) -> OutlineTransition<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+        ) -> OutlineTransition<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect, Loggable>
     ) {
         self.payload = payload
         self.transit = { trigger, machineId, logger in

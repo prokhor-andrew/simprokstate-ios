@@ -10,8 +10,8 @@ import simprokmachine
 public extension Outline {
 
     func asFeature(
-        _ machines: Set<Machine<IntEffect, IntTrigger>>
-    ) -> Feature<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect> {
+        _ machines: Set<Machine<IntEffect, IntTrigger, Loggable>>
+    ) -> Feature<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect, Loggable> {
         Feature(payload: payload, machines: machines) { extras, trigger in
             let transition = transit(trigger, extras.machineId, extras.logger)
             return FeatureTransition(

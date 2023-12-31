@@ -10,7 +10,7 @@ extension Feature: Hashable where Payload: Hashable {
 }
 
 extension Feature: Equatable where Payload: Equatable {
-    public static func ==(lhs: Feature<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>, rhs: Feature<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>) -> Bool {
+    public static func ==(lhs: Feature<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect, Loggable>, rhs: Feature<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect, Loggable>) -> Bool {
         lhs.payload == rhs.payload && lhs.machines == rhs.machines
     }
 }

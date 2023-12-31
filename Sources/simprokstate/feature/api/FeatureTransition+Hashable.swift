@@ -5,7 +5,7 @@
 
 extension FeatureTransition: Equatable where Payload: Equatable, IntTrigger: Equatable, IntEffect: Equatable, ExtEffect: Equatable {
 
-    public static func ==(lhs: FeatureTransition<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>, rhs: FeatureTransition<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>) -> Bool {
+    public static func ==(lhs: FeatureTransition<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect, Loggable>, rhs: FeatureTransition<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect, Loggable>) -> Bool {
         lhs.effects == rhs.effects && lhs.state == rhs.state
     }
 }

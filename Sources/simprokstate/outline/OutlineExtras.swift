@@ -7,13 +7,13 @@
 
 import simprokmachine
 
-public struct OutlineExtras<Payload: Sendable>: Sendable {
+public struct OutlineExtras<Payload: Sendable, Loggable: Sendable>: Sendable {
     
     public let payload: Payload
     public let machineId: String
-    public let logger: MachineLogger
+    public let logger: MachineLogger<Loggable>
     
-    internal init(payload: Payload, machineId: String, logger: MachineLogger) {
+    internal init(payload: Payload, machineId: String, logger: MachineLogger<Loggable>) {
         self.payload = payload
         self.machineId = machineId
         self.logger = logger
@@ -23,7 +23,7 @@ public struct OutlineExtras<Payload: Sendable>: Sendable {
 extension OutlineExtras: CustomStringConvertible, CustomDebugStringConvertible {
     
     public var description: String {
-        "Payload<\(Payload.self)> payload=\(payload) _ machineId=\(machineId)"
+        "Payload<\(Payload.self), \(Loggable.self)> payload=\(payload) _ machineId=\(machineId)"
     }
     
     public var debugDescription: String { description }
@@ -31,7 +31,7 @@ extension OutlineExtras: CustomStringConvertible, CustomDebugStringConvertible {
 
 public extension Outline {
     
-    func extras(machineId: String, logger: MachineLogger) -> OutlineExtras<Payload> {
+    func extras(machineId: String, logger: MachineLogger<Loggable>) -> OutlineExtras<Payload, Loggable> {
         OutlineExtras(payload: payload, machineId: machineId, logger: logger)
     }
 }

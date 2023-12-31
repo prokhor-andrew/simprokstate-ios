@@ -12,8 +12,8 @@ extension Outline: Hashable where Payload: Hashable {
 extension Outline: Equatable where Payload: Equatable {
     
     public static func ==(
-        lhs: Outline<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>,
-        rhs: Outline<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect>
+        lhs: Outline<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect, Loggable>,
+        rhs: Outline<Payload, IntTrigger, IntEffect, ExtTrigger, ExtEffect, Loggable>
     ) -> Bool {
         lhs.payload == rhs.payload
     }

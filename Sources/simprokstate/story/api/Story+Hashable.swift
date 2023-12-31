@@ -12,7 +12,7 @@ extension Story: Hashable where Payload: Hashable {
 
 extension Story: Equatable where Payload: Equatable {
 
-    public static func ==(lhs: Story<Payload, Event>, rhs: Story<Payload, Event>) -> Bool {
+    public static func ==(lhs: Story<Payload, Event, Loggable>, rhs: Story<Payload, Event, Loggable>) -> Bool {
         lhs.payload == rhs.payload
     }
 }

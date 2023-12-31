@@ -7,18 +7,18 @@
 
 import simprokmachine
 
-public struct FeatureExtras<Payload: Sendable, IntTrigger: Sendable, IntEffect: Sendable>: Sendable {
+public struct FeatureExtras<Payload: Sendable, IntTrigger: Sendable, IntEffect: Sendable, Loggable: Sendable>: Sendable {
     
     public let payload: Payload
     public let machineId: String
-    public let machines: Set<Machine<IntEffect, IntTrigger>>
-    public let logger: MachineLogger
+    public let machines: Set<Machine<IntEffect, IntTrigger, Loggable>>
+    public let logger: MachineLogger<Loggable>
     
     internal init(
         payload: Payload,
         machineId: String,
-        machines: Set<Machine<IntEffect, IntTrigger>>,
-        logger: MachineLogger
+        machines: Set<Machine<IntEffect, IntTrigger, Loggable>>,
+        logger: MachineLogger<Loggable>
     ) {
         self.payload = payload
         self.machineId = machineId
@@ -30,7 +30,7 @@ public struct FeatureExtras<Payload: Sendable, IntTrigger: Sendable, IntEffect: 
 extension FeatureExtras: CustomStringConvertible, CustomDebugStringConvertible {
     
     public var description: String {
-        "FeatureExtras<\(Payload.self), \(IntTrigger.self), \(IntEffect.self)> payload=\(payload) _ machineId=\(machineId) _ machines=\(machines)"
+        "FeatureExtras<\(Payload.self), \(IntTrigger.self), \(IntEffect.self), \(Loggable.self)> payload=\(payload) _ machineId=\(machineId) _ machines=\(machines)"
     }
     
     public var debugDescription: String { description }
@@ -39,7 +39,7 @@ extension FeatureExtras: CustomStringConvertible, CustomDebugStringConvertible {
 
 public extension Feature {
     
-    func extras(machineId: String, logger: MachineLogger) -> FeatureExtras<Payload, IntTrigger, IntEffect> {
+    func extras(machineId: String, logger: MachineLogger<Loggable>) -> FeatureExtras<Payload, IntTrigger, IntEffect, Loggable> {
         FeatureExtras(payload: payload, machineId: machineId, machines: machines, logger: logger)
     }
 }
